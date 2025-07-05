@@ -2,12 +2,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class SplashScreenUI extends JFrame implements ActionListener {
     JButton button;
+    JList<String> profileList;
+    DefaultListModel<String> listModel;
     SplashScreenUI(){
         this.setLayout(null);
-        this.setVisible(true);
         JLabel label = new JLabel();
         JLabel label2 = new JLabel();
         label2.setText("Select Existing Profiles:");
@@ -38,9 +44,76 @@ public class SplashScreenUI extends JFrame implements ActionListener {
         button.setText("Create A Profile");
         button.setBounds(200, 300, 200,50);
         button.setFocusable(false);
+
+
+        //Display user profiles
+        listModel = new DefaultListModel<>();
+        profileList = new JList<>(listModel);
+        profileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        profileList.addMouseListener(new MouseAdapter(){
+           public void mouseClicked(MouseEvent evt){
+               if(evt.getClickCount() ==2){
+                   String selectedProfile = profileList.getSelectedValue();
+                   openMainUIForUser(selectedProfile);
+               }
+           }
+        });
+
         this.add(button);
         this.add(panel);
         this.add(label2);
+        panel.setLayout(new BorderLayout());
+        panel.add(new JScrollPane(profileList), BorderLayout.CENTER);
+        loadUserProfiles();
+        this.setVisible(true);
+
+    }
+    private void loadUserProfiles() {
+        try (Connection con = ConnectionProvider.getCon()) {
+            String query = "SELECT name FROM users";
+            assert con != null;
+            PreparedStatement stmt = con.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                listModel.addElement(name);
+            }
+
+            stmt.close();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error loading profiles: " + e.getMessage());
+        }
+    }
+
+    private void openMainUIForUser(String name){
+        try (Connection con = ConnectionProvider.getCon()) {
+            String query = "SELECT * FROM users WHERE name = ?";
+            PreparedStatement stmt = con.prepareStatement(query);
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int id = rs.getInt("idusers");
+                String gender = rs.getString("sex");
+                String dob = rs.getString("dateofbirth");
+                int height = rs.getInt("height_cm");
+                int weight = rs.getInt("weight_kg");
+                String unit = rs.getString("unit");
+
+                UserProfile user = new UserProfile(id, dob, weight , height,gender,name, unit);
+                new MainUI(user);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "User not found.");
+            }
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error opening profile: " + e.getMessage());
+        }
     }
 
     @Override

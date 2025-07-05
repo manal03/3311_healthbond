@@ -4,10 +4,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainUI extends JFrame implements ActionListener {
-    JButton mealEntry;
+    private UserProfile user;
+    JButton mealEntryBtn;
+    JButton editProfileBtn;
     JPanel mealEntryPanel;
     JLabel mealTypeLabel;
     public MainUI(UserProfile user){
+        this.user = user;
         this.setLayout(null);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -15,30 +18,39 @@ public class MainUI extends JFrame implements ActionListener {
         JLabel welcome = new JLabel("Welcome " + user.getName() + "!");
         welcome.setBounds(100,100, 500, 200);
         this.add(welcome);
-        mealEntry = new JButton();
-        mealEntry.setBounds(20, 20, 150, 80);
-        mealEntry.setText("Enter Meal:");
-        mealEntry.setFocusable(false);
-        mealEntry.addActionListener(this);
+        mealEntryBtn = new JButton();
+        editProfileBtn = new JButton();
+        editProfileBtn.setBounds(20, 120, 150, 80);
+        editProfileBtn.setText("Edit Profile");
+        editProfileBtn.setFocusable(false);
+        editProfileBtn.addActionListener(this);
+        mealEntryBtn.setBounds(20, 20, 150, 80);
+        mealEntryBtn.setText("Enter Meal:");
+        mealEntryBtn.setFocusable(false);
+        mealEntryBtn.addActionListener(this);
 
-        this.add(mealEntry);
+        this.add(mealEntryBtn);
+        this.add(editProfileBtn);
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice device = env.getDefaultScreenDevice();
         device.setFullScreenWindow(this);
-
-
 
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==mealEntry){
+        if(e.getSource()==mealEntryBtn){
             showMealEntryForm();
+        }else if(e.getSource()==editProfileBtn){
+            this.dispose();
+            EditProfileUI editProfile = new EditProfileUI(user);
+
         }
     }
+
     private void addIngredientRow(JPanel container) {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        row.setMaximumSize(new Dimension(480, 40));
+        row.setPreferredSize(new Dimension(480, 40));
 
         JTextField ingredientField = new JTextField(15); // for ingredient name
         JTextField quantityField = new JTextField(7);    // for quantity

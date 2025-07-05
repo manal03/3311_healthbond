@@ -4,11 +4,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CreateProfileUI extends JFrame implements ActionListener {
     JButton submit;
     JTextField genderField, weightField, heightField, dobField, nameField;
+    private final JComboBox<String> unitField;
 
     CreateProfileUI() {
         this.getContentPane().setBackground(new Color(36,128,34));
@@ -38,9 +40,19 @@ public class CreateProfileUI extends JFrame implements ActionListener {
 
         JLabel dob = new JLabel("Date of Birth (YYYY-MM-DD):");
         dobField = new JTextField();
+
         dob.setBounds(50, 250, 60, 30);
         dobField.setBounds(120, 250, 100, 30);
         dobField.setPreferredSize(new Dimension(200, 30));
+
+        JLabel unitLabel = new JLabel("Unit:");
+        unitLabel.setBounds(50, 150, 60, 30);
+
+        unitField = new JComboBox<>(new String[]{"metric", "imperial"});
+        unitField.setBounds(120, 150, 100, 30);
+
+        this.add(unitLabel);
+        this.add(unitField);
 
         submit = new JButton("Submit");
         submit.setBounds(580, 300, 100, 30);
@@ -69,23 +81,27 @@ public class CreateProfileUI extends JFrame implements ActionListener {
                 String weight = weightField.getText();
                 String height = heightField.getText();
                 String dob = dobField.getText();
+                String unit = (String) unitField.getSelectedItem();
                 Connection con = ConnectionProvider.getCon();
                 if(con != null){
-                    String query = "INSERT INTO users(sex, dateofbirth, height_cm, weight_kg, name) VALUES(?,?,?,?,?)";
-                    PreparedStatement stmt = con.prepareStatement(query);
+                    String query = "INSERT INTO users(sex, dateofbirth, height_cm, weight_kg, name, unit) VALUES(?,?,?,?,?,?)";
+                    PreparedStatement stmt = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
                     stmt.setString(1,gender);
                     stmt.setString(2, dob);
                     stmt.setInt(3, Integer.parseInt(height));
                     stmt.setInt(4, Integer.parseInt(weight));
                     stmt.setString(5, name);
+                    stmt.setString(6, unit);
 
                     int rowsInserted = stmt.executeUpdate();
                     if (rowsInserted > 0) {
-                        JOptionPane.showMessageDialog(this, "Profile created successfully!");
-                        UserProfile user = new UserProfile(dob,Integer.parseInt(weight) , Integer.parseInt(height),gender,name);
+                        ResultSet generatedKeys = stmt.getGeneratedKeys();
+                        if(generatedKeys.next()){
+                            int userId = generatedKeys.getInt(1);
+                            JOptionPane.showMessageDialog(this, "Profile created successfully!");
+                            UserProfile user = new UserProfile(userId, dob,Integer.parseInt(weight) , Integer.parseInt(height),gender,name, unit);
                         new MainUI(user);
                         this.dispose();
-
                     } else {
                         JOptionPane.showMessageDialog(this, "Profile creation failed.");
                     }
@@ -93,12 +109,16 @@ public class CreateProfileUI extends JFrame implements ActionListener {
                     con.close();
                 }
             }
-            catch (Exception ex) {
-                System.out.println(ex);
-            } {
-
-
+        } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
         }
-    }
+
+
+
 }
+
+
+}
+
+
