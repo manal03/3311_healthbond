@@ -5,7 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class EditProfileUI extends JFrame {
-    //Display current information and on the side, CRUD operation
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	//Display current information and on the side, CRUD operation
     JLabel title;
     JLabel name, dob, weight, height, sex, current;
     EditProfileUI(UserProfile user){

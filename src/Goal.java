@@ -1,4 +1,4 @@
-package Goal;
+
 
 public class Goal {
     protected String GoalID;	//ID of goal generated to be used as primary key in db

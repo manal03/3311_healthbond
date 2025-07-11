@@ -11,6 +11,7 @@ public class CreateProfileUI extends JFrame implements ActionListener {
     JButton submit;
     JTextField genderField, weightField, heightField, dobField, nameField;
     private final JComboBox<String> unitField;
+    private static final long serialVersionUID = 1L;
 
     CreateProfileUI() {
         this.getContentPane().setBackground(new Color(36,128,34));

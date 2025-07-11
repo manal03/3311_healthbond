@@ -1,14 +1,15 @@
-package Goal;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GoalGenerator {
     protected String Nutrient;
     protected double amount;
-    protected String userID;
+    private UserProfile user;
 
 
-    public HashMap<String, Double> getRecommendedNutrients(){
+    public HashMap<String, Double> getRecommendedNutrients(UserProfile user){
+    	
         return null; // Go through each meal nutrient data and compare the amount to the reccomended intake
         // Map the result in a hash map nutrient: difference between entered meal and recommneded actual - suggested
 
