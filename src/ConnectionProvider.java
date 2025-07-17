@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class ConnectionProvider {
 
-    private static final String URL = "jdbc:mysql://127.0.0.1:3306/nutrition_app?useSSL=false&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/createprofile?useSSL=false&serverTimezone=UTC";
     private static final String USER = "root";             // your MySQL username
     private static final String PASSWORD = "Balwinder123/"; // your MySQL password
 
