@@ -20,12 +20,26 @@ public class RecommendNutrients implements RecommendationInterface {
 
     @Override
     public Map<String, Double> findForUser(UserProfile user) {
-    	
         // Create a map to be returned. It will be empty if no results are found.
         Map<String, Double> recommendations = new HashMap<>();
-        String sql = "SELECT * FROM nutrientrecommendations WHERE ? BETWEEN age_min AND age_max " +
-                     "AND gender = ? AND ? BETWEEN weight_min_kg AND weight_max_kg " +
-                     "AND ? BETWEEN height_min_cm AND height_max_cm;";
+
+        // This is the final, correct SQL query from the Canvas.
+        String sql = "SELECT " +
+                     "    nr.recommended_calories_per_day, " +
+                     "    nr.recommended_carbs_grams, " +
+                     "    nr.recommended_protein_grams, " +
+                     "    nr.recommended_fat_grams, " +
+                     "    nr.recommended_fiber_grams " +
+                     "FROM " +
+                     "    users u " +
+                     "JOIN " +
+                     "    nutrientrecommendations nr ON " +
+                     "        TIMESTAMPDIFF(YEAR, u.dateofbirth, CURDATE()) BETWEEN nr.age_min AND nr.age_max " +
+                     "        AND LOWER(u.sex) = LOWER(nr.gender) " +
+                     "        AND u.weight_kg BETWEEN nr.weight_min_kg AND nr.weight_max_kg " +
+                     "        AND u.height_cm BETWEEN nr.height_min_cm AND nr.height_max_cm " +
+                     "WHERE " +
+                     "    u.idusers = ?;";
 
         try (Connection conn = ConnectionProvider.getCon()) {
 
@@ -35,20 +49,8 @@ public class RecommendNutrients implements RecommendationInterface {
             }
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                int age;
-                try {
-                    LocalDate dob = LocalDate.parse(user.getDob(), DateTimeFormatter.ISO_LOCAL_DATE);
-                    age = Period.between(dob, LocalDate.now()).getYears();
-                } catch (DateTimeParseException e) {
-                    System.err.println("DAO Error: Could not parse the date of birth: '" + user.getDob() + "'.");
-                    System.err.println("Please ensure the date format is exactly YYYY-MM-DD.");
-                    return recommendations; // Return empty map
-                }
-
-                pstmt.setInt(1, age);
-                pstmt.setString(2, user.getSex());
-                pstmt.setInt(3, user.getWeight());
-                pstmt.setInt(4, user.getHeight());
+                // Set the user ID for the WHERE clause
+                pstmt.setInt(1, user.getUserId());
 
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
@@ -64,20 +66,9 @@ public class RecommendNutrients implements RecommendationInterface {
             System.err.println("Database error while fetching recommendations: " + e.getMessage());
             e.printStackTrace();
         }
+
         
-        // --- NEW CODE FOR DEBUGGING ---
-        // Print the contents of the map to the console before returning it.
-        System.out.println("--- Debug: Contents of recommendations map ---");
-        if (recommendations.isEmpty()) {
-            System.out.println("Map is empty. No recommendations found.");
-        } else {
-            for (Map.Entry<String, Double> entry : recommendations.entrySet()) {
-                System.out.printf("  Key: %-10s | Value: %.2f%n", entry.getKey(), entry.getValue());
-            }
-        }
-        System.out.println("----------------------------------------------");
         
-        // Return the map, which will be populated if a record was found, or empty otherwise.
         return recommendations;
     }
 }

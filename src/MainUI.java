@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
 
 public class MainUI extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
@@ -12,6 +11,7 @@ public class MainUI extends JFrame implements ActionListener {
     private JButton mealEntryBtn;
     private JButton editProfileBtn;
     private JButton generateGoalBtn;
+    private JButton viewGoalsBtn; // New button
 
     public MainUI(UserProfile user) {
         this.user = user;
@@ -20,28 +20,26 @@ public class MainUI extends JFrame implements ActionListener {
         setSize(900, 600);
         setLocationRelativeTo(null); // Center window on screen
 
-        // Set up the main layout
         setLayout(new BorderLayout());
 
-        // Create a welcome label with some styling
-        JLabel welcome = new JLabel("Welcome " + user.getName() + "!");
+        JLabel welcome = new JLabel("Welcome " + user.getName() + "!", SwingConstants.CENTER);
         welcome.setFont(new Font("SansSerif", Font.BOLD, 24));
         welcome.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         add(welcome, BorderLayout.NORTH);
 
-        // Create taskbar panel (buttons)
         JPanel taskbar = new JPanel();
         taskbar.setBackground(new Color(116, 209, 115));
-        taskbar.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10)); // Centered
+        taskbar.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10));
 
         // Initialize buttons
         mealEntryBtn = new JButton("Enter Meal");
         editProfileBtn = new JButton("Edit Profile");
         generateGoalBtn = new JButton("Generate Goal");
+        viewGoalsBtn = new JButton("View/Manage Goals"); // New button
 
         // Common button styling
-        Dimension btnSize = new Dimension(140, 50);
-        for (JButton btn : new JButton[]{mealEntryBtn, editProfileBtn, generateGoalBtn}) {
+        Dimension btnSize = new Dimension(160, 50); // Increased width for new button text
+        for (JButton btn : new JButton[]{mealEntryBtn, editProfileBtn, generateGoalBtn, viewGoalsBtn}) {
             btn.setPreferredSize(btnSize);
             btn.setFocusable(false);
             btn.addActionListener(this);
@@ -61,22 +59,11 @@ public class MainUI extends JFrame implements ActionListener {
             this.dispose();
             new EditProfileUI(user);
         } else if (e.getSource() == generateGoalBtn) {
-            // --- THIS IS THE NEW LOGIC FOR THE "Generate Goal" BUTTON ---
-
-            // 1. Instantiate the class that implements the interface.
-            RecommendationInterface recommendationFinder = new RecommendNutrients();
-
-            System.out.println("--- Button Clicked: Calling findForUser method ---");
-
-            // 2. Call the method to get the recommended daily goals.
-            //    The method will automatically print the HashMap contents to the console.
-            Map<String, Double> recommendedGoals = recommendationFinder.findForUser(user);
-
-            // 3. Show a confirmation message to the user.
-            JOptionPane.showMessageDialog(this,
-                    "The recommended goals have been fetched. Please check the console for the results.",
-                    "Test Complete",
-                    JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+            new GoalGeneratorUI(user);
+        } else if (e.getSource() == viewGoalsBtn) { // Handle new button click
+            this.dispose();
+            new ViewGoalsUI(user); // Open the new ViewGoalsUI window
         }
     }
 }
