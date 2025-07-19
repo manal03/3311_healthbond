@@ -32,7 +32,7 @@ class FoodItem {
 
 public class MealLog extends JFrame {
     private static final long serialVersionUID = 1L;
-    private JButton submit;
+    private JButton submit, backButton; // Added backButton
     private JComboBox<String> mealType;
     private JTextField dateField, quantityField;
     private UserProfile user;
@@ -47,6 +47,16 @@ public class MealLog extends JFrame {
         this.setSize(700, 550);
         this.setTitle("Log a Meal");
 
+        // --- NEW: Back to Main Menu (Go Home) Button ---
+        backButton = new JButton("Back to Main Menu");
+        backButton.setBounds(500, 20, 170, 30); // Positioned at the top right
+        backButton.addActionListener(e -> {
+            this.dispose(); // Close the current window
+            new MainUI(user).setVisible(true); // Open the MainUI window
+        });
+        this.add(backButton);
+
+        // --- Standard Meal and Date setup ---
         String[] mealTypes = {"Breakfast", "Lunch", "Dinner", "Snack"};
         mealType = new JComboBox<>(mealTypes);
         mealType.setBounds(20, 40, 150, 30);
@@ -96,7 +106,7 @@ public class MealLog extends JFrame {
     }
 
     /**
-     * Searches the database with a more intelligent, multi-word, case-insensitive query.
+     * Searches for foods that have nutritional data (FoodID <= 78).
      */
     private void searchForFood() {
         String searchText = searchField.getText().trim();
@@ -105,26 +115,18 @@ public class MealLog extends JFrame {
             return;
         }
 
-        // Split the user's input into individual words
-        String[] searchWords = searchText.split("\\s+");
-
-        // --- Build a dynamic SQL query ---
-        // This creates a query with a "LIKE" clause for each word the user types.
-        StringBuilder sqlBuilder = new StringBuilder("SELECT FoodID, FoodDescription FROM food_name WHERE 1=1 ");
-        for (int i = 0; i < searchWords.length; i++) {
-            sqlBuilder.append("AND LOWER(FoodDescription) LIKE ? ");
-        }
-        sqlBuilder.append("LIMIT 30"); // Limit results to avoid overwhelming the UI
+        // --- CRITICAL FIX: The search query is now much smarter ---
+        // It only shows foods that you have nutrient data for (FoodID <= 78).
+        String sql = "SELECT FoodID, FoodDescription FROM food_name " +
+                     "WHERE LOWER(FoodDescription) LIKE ? AND FoodID <= 78 " +
+                     "LIMIT 30";
 
         List<FoodItem> foundItems = new ArrayList<>();
 
         try (Connection conn = ConnectionProvider.getCon();
-             PreparedStatement pstmt = conn.prepareStatement(sqlBuilder.toString())) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Bind each search word to a placeholder in the query
-            for (int i = 0; i < searchWords.length; i++) {
-                pstmt.setString(i + 1, "%" + searchWords[i].toLowerCase() + "%");
-            }
+            pstmt.setString(1, "%" + searchText.toLowerCase() + "%");
 
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
