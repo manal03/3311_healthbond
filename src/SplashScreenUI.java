@@ -90,6 +90,7 @@ public class SplashScreenUI extends JFrame implements ActionListener {
     private void openMainUIForUser(String name){
         try (Connection con = ConnectionProvider.getCon()) {
             String query = "SELECT * FROM users WHERE name = ?";
+            assert con != null;
             PreparedStatement stmt = con.prepareStatement(query);
             stmt.setString(1, name);
             ResultSet rs = stmt.executeQuery();

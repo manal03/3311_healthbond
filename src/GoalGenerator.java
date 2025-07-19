@@ -1,4 +1,3 @@
-package Goal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
