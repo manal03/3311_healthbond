@@ -11,7 +11,7 @@ public class MainUI extends JFrame implements ActionListener {
     private JButton mealEntryBtn;
     private JButton editProfileBtn;
     private JButton generateGoalBtn;
-    private JButton viewGoalsBtn; // New button
+    private JButton viewGoalsBtn; 
 
     public MainUI(UserProfile user) {
         this.user = user;
@@ -35,10 +35,11 @@ public class MainUI extends JFrame implements ActionListener {
         mealEntryBtn = new JButton("Enter Meal");
         editProfileBtn = new JButton("Edit Profile");
         generateGoalBtn = new JButton("Generate Goal");
-        viewGoalsBtn = new JButton("View/Manage Goals"); // New button
+        viewGoalsBtn = new JButton("View/Manage Goals"); 
+        
 
-        // Common button styling
-        Dimension btnSize = new Dimension(160, 50); // Increased width for new button text
+        
+        Dimension btnSize = new Dimension(160, 50); 
         for (JButton btn : new JButton[]{mealEntryBtn, editProfileBtn, generateGoalBtn, viewGoalsBtn}) {
             btn.setPreferredSize(btnSize);
             btn.setFocusable(false);
@@ -61,9 +62,9 @@ public class MainUI extends JFrame implements ActionListener {
         } else if (e.getSource() == generateGoalBtn) {
             this.dispose();
             new GoalGeneratorUI(user);
-        } else if (e.getSource() == viewGoalsBtn) { // Handle new button click
+        } else if (e.getSource() == viewGoalsBtn) { 
             this.dispose();
-            new ViewGoalsUI(user); // Open the new ViewGoalsUI window
+            new ViewGoalsUI(user); 
         }
     }
 }

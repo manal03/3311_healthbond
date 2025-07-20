@@ -32,7 +32,7 @@ class FoodItem {
 
 public class MealLog extends JFrame {
     private static final long serialVersionUID = 1L;
-    private JButton submit, backButton; // Added backButton
+    private JButton submit, backButton; 
     private JComboBox<String> mealType;
     private JTextField dateField, quantityField;
     private UserProfile user;
@@ -115,10 +115,8 @@ public class MealLog extends JFrame {
             return;
         }
 
-        // --- CRITICAL FIX: The search query is now much smarter ---
-        // It only shows foods that you have nutrient data for (FoodID <= 78).
         String sql = "SELECT FoodID, FoodDescription FROM food_name " +
-                     "WHERE LOWER(FoodDescription) LIKE ? AND FoodID <= 78 " +
+                     "WHERE LOWER(FoodDescription) LIKE ? " +
                      "LIMIT 30";
 
         List<FoodItem> foundItems = new ArrayList<>();
