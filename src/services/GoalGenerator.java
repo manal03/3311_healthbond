@@ -1,3 +1,7 @@
+package services;
+
+import models.Goal;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 

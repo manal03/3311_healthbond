@@ -1,7 +1,11 @@
+package UI;
+
+import database.ConnectionProvider;
+import models.UserProfile;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
