@@ -1,3 +1,7 @@
+package UI;
+
+import models.UserProfile;
+
 public class GoalGeneratorUI {
 
 

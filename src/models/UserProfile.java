@@ -1,3 +1,5 @@
+package models;
+
 //class - blueprint variables
 public class UserProfile {
     private int userId;

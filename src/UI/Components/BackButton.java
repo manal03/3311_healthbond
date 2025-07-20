@@ -1,7 +1,5 @@
 package UI.Components;
 
-//import UI.SplashScreenUI;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,7 +19,7 @@ public class BackButton extends JButton implements ActionListener {
     public BackButton(JFrame currentFrame) {
         super("← Back");
         this.currentFrame = currentFrame;
-        this.previousFrame = null; // Will create new SplashScreenUI
+        this.previousFrame = null;
         setupButton();
     }
 
@@ -52,16 +50,7 @@ public class BackButton extends JButton implements ActionListener {
         if (previousFrame != null) {
             previousFrame.setVisible(true);
         } else {
-//            new SplashScreenUI();
+            new UI.SplashScreenUI();
         }
-    }
-
-    public void setPosition(int x, int y) {
-        this.setBounds(x, y, 80, 30);
-    }
-
-    public void setCustomSize(int width, int height) {
-        this.setPreferredSize(new Dimension(width, height));
-        this.setSize(width, height);
     }
 }
