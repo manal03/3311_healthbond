@@ -1,9 +1,9 @@
 package UI;
 
 import models.UserProfile;
-import services.NutrientInfo;
+import models.NutrientInfo;
 import services.Substitution;
-import services.SubstitutionRecord;
+import models.SubstitutionRecord;
 import utility.ConnectionProvider;
 
 import javax.swing.*;

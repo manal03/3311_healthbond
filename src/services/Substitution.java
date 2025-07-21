@@ -1,5 +1,7 @@
 package services;
 
+import models.NutrientInfo;
+import models.SubstitutionRecord;
 import utility.ConnectionProvider;
 import java.sql.*;
 import java.time.LocalDate;

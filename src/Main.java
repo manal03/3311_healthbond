@@ -1,4 +1,3 @@
-package utility;
 import UI.SplashScreenUI;
 
 public class Main {
