@@ -1,7 +1,7 @@
 package UI;
 
 import UI.Components.BackButton;
-import database.ConnectionProvider;
+import utility.ConnectionProvider;
 import models.UserProfile;
 
 import javax.swing.*;

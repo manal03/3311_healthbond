@@ -15,6 +15,8 @@ public class MainUI extends JFrame implements ActionListener {
     private JButton editProfileBtn;
     private JButton generateGoalBtn;
     private JButton journalViewBtn;
+    private JButton substitutionBtn;
+    private JButton nutrientVisualBtn;
 
     public MainUI(UserProfile user) {
         this.user = user;
@@ -90,6 +92,24 @@ public class MainUI extends JFrame implements ActionListener {
         journalViewBtn.addActionListener(this);
         content.add(journalViewBtn);
 
+        substitutionBtn = new JButton("Food Substitution");
+        substitutionBtn.setBounds(200, 300, 200, 40);
+        substitutionBtn.setFont(new Font("Arial", Font.PLAIN, 14));
+        substitutionBtn.setBackground(new Color(85, 170, 85));
+        substitutionBtn.setForeground(Color.WHITE);
+        substitutionBtn.setFocusable(false);
+        substitutionBtn.addActionListener(this);
+        content.add(substitutionBtn);
+
+        nutrientVisualBtn = new JButton("Nutrient Visual");
+        nutrientVisualBtn.setBounds(200, 360, 200, 40);
+        nutrientVisualBtn.setFont(new Font("Arial", Font.PLAIN, 14));
+        nutrientVisualBtn.setBackground(new Color(85, 170, 85));
+        nutrientVisualBtn.setForeground(Color.WHITE);
+        nutrientVisualBtn.setFocusable(false);
+        nutrientVisualBtn.addActionListener(this);
+        content.add(nutrientVisualBtn);
+
         JLabel infoLabel = new JLabel("User Info:");
         infoLabel.setBounds(50, 300, 100, 20);
         infoLabel.setFont(new Font("Arial", Font.BOLD, 12));
@@ -122,6 +142,12 @@ public class MainUI extends JFrame implements ActionListener {
             this.dispose();
         } else if (e.getSource() == journalViewBtn) {
             new JournalViewUI(user);
+            this.dispose();
+        }
+        else if (e.getSource() == substitutionBtn) {
+            new SubstitutionUI(user);
+        } else if (e.getSource() == nutrientVisualBtn) {
+            //new NutrientVisualizerUI(user);
             this.dispose();
         }
     }
