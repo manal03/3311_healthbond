@@ -17,6 +17,7 @@ public class MainUI extends JFrame implements ActionListener {
     private JButton journalViewBtn;
     private JButton substitutionBtn;
     private JButton nutrientVisualBtn;
+    private JButton cfgAlignmentBtn;  // New button for Canada Food Guide
 
     public MainUI(UserProfile user) {
         this.user = user;
@@ -46,7 +47,7 @@ public class MainUI extends JFrame implements ActionListener {
 
         JPanel content = new JPanel();
         content.setLayout(null);
-        content.setBounds(100, 120, 600, 400);
+        content.setBounds(100, 120, 600, 420);
         content.setBackground(new Color(142, 182, 101));
         content.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         add(content);
@@ -66,7 +67,7 @@ public class MainUI extends JFrame implements ActionListener {
         content.add(mealEntryBtn);
 
         editProfileBtn = new JButton("Edit Profile");
-        editProfileBtn.setBounds(200, 120, 200, 40);
+        editProfileBtn.setBounds(200, 110, 200, 40);
         editProfileBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         editProfileBtn.setBackground(new Color(85, 170, 85));
         editProfileBtn.setForeground(Color.WHITE);
@@ -75,7 +76,7 @@ public class MainUI extends JFrame implements ActionListener {
         content.add(editProfileBtn);
 
         generateGoalBtn = new JButton("Generate Goal");
-        generateGoalBtn.setBounds(200, 180, 200, 40);
+        generateGoalBtn.setBounds(200, 160, 200, 40);
         generateGoalBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         generateGoalBtn.setBackground(new Color(85, 170, 85));
         generateGoalBtn.setForeground(Color.WHITE);
@@ -84,7 +85,7 @@ public class MainUI extends JFrame implements ActionListener {
         content.add(generateGoalBtn);
 
         journalViewBtn = new JButton("Journal View");
-        journalViewBtn.setBounds(200, 240, 200, 40);
+        journalViewBtn.setBounds(200, 210, 200, 40);
         journalViewBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         journalViewBtn.setBackground(new Color(85, 170, 85));
         journalViewBtn.setForeground(Color.WHITE);
@@ -93,7 +94,7 @@ public class MainUI extends JFrame implements ActionListener {
         content.add(journalViewBtn);
 
         substitutionBtn = new JButton("Food Substitution");
-        substitutionBtn.setBounds(200, 300, 200, 40);
+        substitutionBtn.setBounds(200, 260, 200, 40);
         substitutionBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         substitutionBtn.setBackground(new Color(85, 170, 85));
         substitutionBtn.setForeground(Color.WHITE);
@@ -102,7 +103,7 @@ public class MainUI extends JFrame implements ActionListener {
         content.add(substitutionBtn);
 
         nutrientVisualBtn = new JButton("Nutrient Visual");
-        nutrientVisualBtn.setBounds(200, 360, 200, 40);
+        nutrientVisualBtn.setBounds(200, 310, 200, 40);
         nutrientVisualBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         nutrientVisualBtn.setBackground(new Color(85, 170, 85));
         nutrientVisualBtn.setForeground(Color.WHITE);
@@ -110,18 +111,27 @@ public class MainUI extends JFrame implements ActionListener {
         nutrientVisualBtn.addActionListener(this);
         content.add(nutrientVisualBtn);
 
+        cfgAlignmentBtn = new JButton("CFG Alignment");
+        cfgAlignmentBtn.setBounds(200, 360, 200, 40);
+        cfgAlignmentBtn.setFont(new Font("Arial", Font.PLAIN, 14));
+        cfgAlignmentBtn.setBackground(new Color(85, 170, 85));
+        cfgAlignmentBtn.setForeground(Color.WHITE);
+        cfgAlignmentBtn.setFocusable(false);
+        cfgAlignmentBtn.addActionListener(this);
+        content.add(cfgAlignmentBtn);
+
         JLabel infoLabel = new JLabel("User Info:");
-        infoLabel.setBounds(50, 300, 100, 20);
+        infoLabel.setBounds(50, 320, 100, 20);
         infoLabel.setFont(new Font("Arial", Font.BOLD, 12));
         content.add(infoLabel);
 
         JLabel heightLabel = new JLabel("Height: " + user.getHeight() + " cm");
-        heightLabel.setBounds(50, 320, 150, 20);
+        heightLabel.setBounds(50, 340, 150, 20);
         heightLabel.setFont(new Font("Arial", Font.PLAIN, 11));
         content.add(heightLabel);
 
         JLabel weightLabel = new JLabel("Weight: " + user.getWeight() + " kg");
-        weightLabel.setBounds(50, 340, 150, 20);
+        weightLabel.setBounds(50, 360, 150, 20);
         weightLabel.setFont(new Font("Arial", Font.PLAIN, 11));
         content.add(weightLabel);
 
@@ -143,11 +153,14 @@ public class MainUI extends JFrame implements ActionListener {
         } else if (e.getSource() == journalViewBtn) {
             new JournalViewUI(user);
             this.dispose();
-        }
-        else if (e.getSource() == substitutionBtn) {
+        } else if (e.getSource() == substitutionBtn) {
             new SubstitutionUI(user);
+            this.dispose();
         } else if (e.getSource() == nutrientVisualBtn) {
             //new NutrientVisualizerUI(user);
+            this.dispose();
+        } else if (e.getSource() == cfgAlignmentBtn) {
+            new CanadaFoodGuideUI(user);
             this.dispose();
         }
     }
