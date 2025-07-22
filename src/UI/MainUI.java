@@ -147,7 +147,11 @@ public class MainUI extends JFrame implements ActionListener {
         else if (e.getSource() == substitutionBtn) {
             new SubstitutionUI(user);
         } else if (e.getSource() == nutrientVisualBtn) {
-            new NutrientVisualizerUI(user);
+            //new NutrientVisualizerUI(user);
+            this.dispose();
+        } else if (e.getSource() == cfgAlignmentBtn) {
+            new CanadaFoodGuideUI(user);
+            this.dispose();
         }
     }
 }
