@@ -28,16 +28,7 @@ public class NutrientSummary {
     public double getPercentageOfTotal() { return percentageOfTotal; }
     public double getPercentageOfRecommended() { return percentageOfRecommended; }
 
-    public String getStatus() {
-        if (percentageOfRecommended >= 95 && percentageOfRecommended <= 105) {
-            return "Optimal";
-        } else if (percentageOfRecommended >= 80) {
-            return "Adequate";
-        } else {
-            return "Low";
-        }
-    }
-
+    // Returns a color based on how close the intake is to the recommendation
     public Color getStatusColor() {
         if (percentageOfRecommended >= 100) {
             return new Color(50, 168, 82); // Green

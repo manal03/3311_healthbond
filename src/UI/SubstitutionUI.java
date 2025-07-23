@@ -1,4 +1,3 @@
-
 package UI;
 
 import models.NutrientInfo;
@@ -26,7 +25,7 @@ public class SubstitutionUI extends JFrame {
     public SubstitutionUI(UserProfile user) {
         this.user = user;
         try {
-            originalMealOptions = Substitution.getLoggedFoodNames(user.getUserId()); // Cache the meal list
+            originalMealOptions = Substitution.getLoggedFoodNames(user.getUserId());
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Could not load food names: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -153,14 +152,12 @@ public class SubstitutionUI extends JFrame {
             endDateField.setEnabled(custom);
         });
 
-        // Add components to panel
         panel.add(lblOrig, gbc); gbc.gridx = 1; panel.add(originalCombo, gbc);
         gbc.gridx = 0; gbc.gridy++; panel.add(lblSub, gbc); gbc.gridx = 1; panel.add(substituteCombo, gbc);
         gbc.gridx = 0; gbc.gridy++; panel.add(lblRange, gbc); gbc.gridx = 1; panel.add(rangeCombo, gbc);
         gbc.gridx = 0; gbc.gridy++; panel.add(lblStart, gbc); gbc.gridx = 1; panel.add(startDateField, gbc);
         gbc.gridx = 0; gbc.gridy++; panel.add(lblEnd, gbc); gbc.gridx = 1; panel.add(endDateField, gbc);
 
-        // Apply Button
         JButton btnApply = new JButton("Apply Substitution");
         btnApply.setBackground(new Color(85, 170, 85));
         btnApply.setForeground(Color.WHITE);
@@ -194,7 +191,6 @@ public class SubstitutionUI extends JFrame {
             }
         });
 
-        // Add button to bottom center
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 2;

@@ -36,7 +36,7 @@ public class NutrientVisualizerUI extends JFrame {
     private void initializeUI() {
         setTitle("Health Tracker - Nutrient Visualizer");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(1000, 720); // Smaller window
+        setSize(1000, 720);
         setLayout(null);
         setResizable(false);
         getContentPane().setBackground(new Color(116, 209, 115));
@@ -291,7 +291,7 @@ public class NutrientVisualizerUI extends JFrame {
         html.append("</table></body></html>");
 
         summaryPane.setText(html.toString());
-        summaryPane.setCaretPosition(0); // Scroll to top
+        summaryPane.setCaretPosition(0);
     }
 
     private void showStatusIndicators(List<NutrientSummary> summaries) {
@@ -322,7 +322,6 @@ public class NutrientVisualizerUI extends JFrame {
         ));
         card.setBackground(Color.WHITE);
 
-        // Left: Color Dot
         JPanel dot = new JPanel();
         dot.setPreferredSize(new Dimension(14, 14));
         dot.setBackground(summary.getStatusColor());
@@ -330,18 +329,16 @@ public class NutrientVisualizerUI extends JFrame {
         dot.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
         dot.setMaximumSize(new Dimension(14, 14));
 
-        // Center: Name & Progress
         String cleanName = cleanName(summary.getName());
         JLabel nameLabel = new JLabel("<html><b>" + cleanName + "</b></html>");
         nameLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
-        JProgressBar bar = new JProgressBar(0, 200); // Assuming 200% as max cap
+        JProgressBar bar = new JProgressBar(0, 200);
         bar.setValue((int) summary.getPercentageOfRecommended());
         bar.setStringPainted(true);
         bar.setString(String.format("%.1f%%", summary.getPercentageOfRecommended()));
         bar.setForeground(summary.getStatusColor());
 
-        // Right: Amounts
         JLabel amountLabel = new JLabel(String.format("%.1f / %.1f %s",
                 summary.getDailyAverage(),
                 summary.getRecommended(),

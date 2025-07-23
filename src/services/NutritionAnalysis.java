@@ -20,6 +20,8 @@ public class NutritionAnalysis {
         this.recommendedIntake = new RecommendedIntake(user);
     }
 
+    // Analyzes nutrient intake between the given date range
+    // Returns a sorted list of nutrient summaries
     public List<NutrientSummary> analyzeNutrients(LocalDate start, LocalDate end) throws SQLException {
         List<NutrientInfo> averages = getDailyAverages(start, end);
         Map<String, Float> recommendedMap = recommendedIntake.getRecommendedMap();
@@ -39,10 +41,12 @@ public class NutritionAnalysis {
             ));
         }
 
+        // Sorts nutrients by their percentage contribution, in descending order
         result.sort(Comparator.comparingDouble(NutrientSummary::getPercentageOfTotal).reversed());
         return result;
     }
 
+    // Retrieves average daily nutrient values for the user over the given date range
     private List<NutrientInfo> getDailyAverages(LocalDate start, LocalDate end) throws SQLException {
         List<NutrientInfo> averages = new ArrayList<>();
         long days = java.time.temporal.ChronoUnit.DAYS.between(start, end) + 1;

@@ -1,7 +1,5 @@
 package models;
 
-import models.UserProfile;
-
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +14,9 @@ public class RecommendedIntake {
         this.user = user;
     }
 
+    // Calculates age from a date string.
+    // Tries ISO format first, then "dd/MM/yyyy".
+    // Returns 30 if both formats fail.
     public double calculateAge(String dobString) {
         try {
             return calculateAgeFromFormat(dobString, DateTimeFormatter.ISO_LOCAL_DATE);
@@ -29,11 +30,13 @@ public class RecommendedIntake {
         }
     }
 
+    // Parses the date and calculates age in years.
     private double calculateAgeFromFormat(String dobString, DateTimeFormatter formatter) {
         LocalDate dob = LocalDate.parse(dobString, formatter);
         return (double) ChronoUnit.YEARS.between(dob, LocalDate.now());
     }
 
+    // Returns a map of recommended daily intake values.
     public Map<String, Float> getRecommendedMap() {
         Map<String, Float> recommendedMap = new HashMap<>();
 
@@ -45,6 +48,4 @@ public class RecommendedIntake {
 
         return recommendedMap;
     }
-
 }
-

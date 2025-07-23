@@ -3,6 +3,7 @@ package services;
 import models.NutrientInfo;
 import models.SubstitutionRecord;
 import utility.ConnectionProvider;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,9 +14,10 @@ import java.util.stream.Collectors;
 
 public class Substitution {
 
+    // Applies a substitution for a food item in meals within a given date range
     public void applySubstitutionToMeals(int userId, int originalFoodId, int substituteFoodId, Date startDate, Date endDate) throws SQLException {
         try (Connection con = ConnectionProvider.getCon()) {
-            // 1. Find all meals with the originalFoodId in the date range
+            // Finds all meals that contain the original food in the given range
             String sqlMeals = """
             SELECT m.idmeals, m.date
             FROM meals m
@@ -41,7 +43,7 @@ public class Substitution {
                 }
             }
 
-            // 2. Insert a substitution record per meal date
+            // Records each substitution applied to those meals
             String insertSql = """
             INSERT INTO swap_records
             (user_id, original_food_id, substitute_food_id, start_date, end_date, date_applied)
@@ -53,10 +55,10 @@ public class Substitution {
                     psInsert.setInt(1, userId);
                     psInsert.setInt(2, originalFoodId);
                     psInsert.setInt(3, substituteFoodId);
-                    // Instead of start_date and end_date, store the actual meal date as both start and end for clarity
+
                     psInsert.setDate(4, meal.mealDate);
                     psInsert.setDate(5, meal.mealDate);
-                    psInsert.setDate(6, new java.sql.Date(System.currentTimeMillis())); // substitution applied now
+                    psInsert.setDate(6, new java.sql.Date(System.currentTimeMillis()));
                     psInsert.addBatch();
                 }
                 psInsert.executeBatch();
@@ -64,6 +66,7 @@ public class Substitution {
         }
     }
 
+    // Helper class to hold meal ID and date
     private static class MealInstance {
         int mealId;
         Date mealDate;
@@ -74,6 +77,7 @@ public class Substitution {
         }
     }
 
+    // Returns the list of all substitution records for a given user
     public List<SubstitutionRecord> getSubstitutionHistory(int userId) throws SQLException {
         List<SubstitutionRecord> records = new ArrayList<>();
 
@@ -111,6 +115,7 @@ public class Substitution {
         return records;
     }
 
+    // Retrieves nutrient data for a list of food IDs
     public Map<Integer, Map<String, NutrientInfo>> getNutrientDataForFoods(List<Integer> foodIds) throws SQLException {
         Map<Integer, Map<String, NutrientInfo>> nutrientData = new HashMap<>();
 
@@ -148,6 +153,7 @@ public class Substitution {
         return nutrientData;
     }
 
+    // Returns names of foods logged by the user in the last 30 days
     public static List<String> getLoggedFoodNames(int userId) throws SQLException {
         List<String> foodNames = new ArrayList<>();
         String sql = "SELECT fn.FoodDescription " +
@@ -170,6 +176,7 @@ public class Substitution {
         return foodNames;
     }
 
+    // Returns all food names in the database
     public static List<String> getAllFoodNames() {
         List<String> list = new ArrayList<>();
         String sql = "SELECT FoodDescription FROM food_name ORDER BY FoodDescription";
@@ -181,6 +188,7 @@ public class Substitution {
         return list;
     }
 
+    // Returns all foodID in the database
     public static int getFoodIdByName(String name) throws SQLException {
         String sql = "SELECT FoodID FROM food_name WHERE FoodDescription = ?";
         try (Connection c = ConnectionProvider.getCon();
@@ -193,6 +201,7 @@ public class Substitution {
         throw new SQLException("Food not found: " + name);
     }
 
+    // Returns the food name by ID, or "Unknown" if not found
     public static String getFoodNameById(int id) throws SQLException {
         String sql = "SELECT FoodDescription FROM food_name WHERE FoodID = ?";
         try (Connection c = ConnectionProvider.getCon();
