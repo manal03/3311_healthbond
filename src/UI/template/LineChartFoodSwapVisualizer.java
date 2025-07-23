@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * Concrete implementation of food swap visualizer using line charts
+ * Implementation of food swap visualizer using line charts
  */
 public class LineChartFoodSwapVisualizer extends AbstractFoodSwapVisualizer {
 
@@ -35,9 +35,6 @@ public class LineChartFoodSwapVisualizer extends AbstractFoodSwapVisualizer {
         }
     }
 
-    /**
-     * Check if all values are zero
-     */
     private boolean allValuesZero(Map<LocalDate, Double> map1, Map<LocalDate, Double> map2) {
         for (Double value : map1.values()) {
             if (value > 0) return false;
@@ -48,9 +45,6 @@ public class LineChartFoodSwapVisualizer extends AbstractFoodSwapVisualizer {
         return true;
     }
 
-    /**
-     * Create a summary panel for CFG adherence
-     */
     private JPanel createCFGSummaryPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -132,12 +126,10 @@ public class LineChartFoodSwapVisualizer extends AbstractFoodSwapVisualizer {
                 maxValue = minValue + 1;
             }
 
-            // Add some padding to the range
             double range = maxValue - minValue;
             minValue -= range * 0.1;
             maxValue += range * 0.1;
 
-            // Get sorted dates
             java.util.List<LocalDate> sortedDates = new ArrayList<>(beforeData.keySet());
             Collections.sort(sortedDates);
 
@@ -164,7 +156,6 @@ public class LineChartFoodSwapVisualizer extends AbstractFoodSwapVisualizer {
                 }
             }
 
-            // Draw lines
             g2d.setStroke(new BasicStroke(2));
 
             // Draw before line
@@ -191,7 +182,6 @@ public class LineChartFoodSwapVisualizer extends AbstractFoodSwapVisualizer {
                     g2d.drawLine((int)p1.getX(), (int)p1.getY(), (int)p2.getX(), (int)p2.getY());
                 }
 
-                // Draw points
                 for (Point2D point : afterPoints) {
                     g2d.fillOval((int)point.getX() - 3, (int)point.getY() - 3, 6, 6);
                 }

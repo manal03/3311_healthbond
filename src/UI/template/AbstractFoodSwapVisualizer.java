@@ -41,7 +41,6 @@ public abstract class AbstractFoodSwapVisualizer {
         cfgBeforeData = new HashMap<>();
         cfgAfterData = new HashMap<>();
 
-        // Initialize services
         this.substitutionService = new Substitution();
     }
 
@@ -91,8 +90,6 @@ public abstract class AbstractFoodSwapVisualizer {
             List<SubstitutionRecord> allRecords = substitutionService.getSubstitutionHistory(user.getUserId());
             LocalDate startDate = calculateStartDate(LocalDate.now());
             LocalDate endDate = LocalDate.now();
-
-            // Filter records by date range
             List<SubstitutionRecord> filteredRecords = new ArrayList<>();
             for (SubstitutionRecord record : allRecords) {
                 LocalDate dateApplied = record.getDateApplied();
@@ -126,16 +123,13 @@ public abstract class AbstractFoodSwapVisualizer {
             }
 
             try {
-                // Get nutrient data for all foods at once
                 Map<Integer, Map<String, NutrientInfo>> nutrientData =
                         substitutionService.getNutrientDataForFoods(new ArrayList<>(foodIds));
 
-                // Process each substitution record
                 for (SubstitutionRecord record : records) {
                     LocalDate date = record.getDateApplied();
                     if (date == null) continue;
 
-                    // Get nutrient values
                     Map<String, NutrientInfo> originalNutrients = nutrientData.get(record.getOriginalFoodId());
                     Map<String, NutrientInfo> substitutedNutrients = nutrientData.get(record.getSubstituteFoodId());
 
@@ -143,7 +137,6 @@ public abstract class AbstractFoodSwapVisualizer {
                         double originalValue = getNutrientValue(originalNutrients, selectedNutrient);
                         double substitutedValue = getNutrientValue(substitutedNutrients, selectedNutrient);
 
-                        // Add to the data maps
                         beforeSwapData.merge(date, originalValue, Double::sum);
                         afterSwapData.merge(date, substitutedValue, Double::sum);
                     }
@@ -195,7 +188,7 @@ public abstract class AbstractFoodSwapVisualizer {
 
         FoodGroupData currentData = FoodGroupService.getUserFoodGroupData(user, days);
 
-        // For "before" data, use current proportions
+        // For before data
         cfgBeforeData.put("Vegetables & Fruits", currentData.getVegetables() + currentData.getFruits());
         cfgBeforeData.put("Grains", currentData.getGrains());
         cfgBeforeData.put("Protein", currentData.getProtein());
@@ -204,7 +197,7 @@ public abstract class AbstractFoodSwapVisualizer {
             cfgBeforeData.put("Dairy", currentData.getDairy());
         }
 
-        // For "after" data, simulate improvement toward recommended proportions
+        // For after data
         FoodGroupData recommended = FoodGroupService.getRecommendedProportions();
 
         double vegFruitImproved = cfgBeforeData.get("Vegetables & Fruits") +
@@ -225,9 +218,6 @@ public abstract class AbstractFoodSwapVisualizer {
         }
     }
 
-    /**
-     * Create the base visualization panel
-     */
     protected JPanel createVisualizationPanel() {
         JPanel panel = new JPanel();
         panel.setBackground(Color.WHITE);
@@ -236,27 +226,19 @@ public abstract class AbstractFoodSwapVisualizer {
         return panel;
     }
 
-    /**
-     * Add legend and summary statistics
-     */
     protected void addLegendAndSummary(JPanel panel) {
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBackground(Color.WHITE);
 
-        // Legend
         JPanel legendPanel = createLegendPanel();
         bottomPanel.add(legendPanel, BorderLayout.WEST);
 
-        // Summary statistics
         JPanel summaryPanel = createSummaryPanel();
         bottomPanel.add(summaryPanel, BorderLayout.EAST);
 
         panel.add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    /**
-     * Create legend panel
-     */
     protected JPanel createLegendPanel() {
         JPanel legend = new JPanel(new FlowLayout(FlowLayout.LEFT));
         legend.setBackground(Color.WHITE);
@@ -274,9 +256,6 @@ public abstract class AbstractFoodSwapVisualizer {
         return legend;
     }
 
-    /**
-     * Create summary statistics panel
-     */
     protected JPanel createSummaryPanel() {
         JPanel summary = new JPanel(new GridLayout(2, 1));
         summary.setBackground(Color.WHITE);

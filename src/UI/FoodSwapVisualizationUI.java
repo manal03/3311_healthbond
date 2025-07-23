@@ -120,7 +120,6 @@ public class FoodSwapVisualizationUI extends JFrame implements ActionListener {
         String timePeriod = (String) timePeriodCombo.getSelectedItem();
         boolean includeCFG = cfgAdherenceCheck.isSelected();
 
-        // Create appropriate visualizer based on selection
         switch (visualType) {
             case "Bar Chart":
                 currentVisualizer = new BarChartFoodSwapVisualizer(user, nutrient, timePeriod, includeCFG);
@@ -130,7 +129,7 @@ public class FoodSwapVisualizationUI extends JFrame implements ActionListener {
                 break;
         }
 
-        // Clear previous visualization and generate new one
+        // Clear visualization, generate new one
         visualizationPanel.removeAll();
         JPanel visualization = currentVisualizer.generateVisualization();
         visualizationPanel.add(visualization, BorderLayout.CENTER);

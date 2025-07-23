@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**
- * Concrete implementation of food swap visualizer using bar charts
+ * Implementation of food swap visualizer using bar charts
  */
 public class BarChartFoodSwapVisualizer extends AbstractFoodSwapVisualizer {
 
@@ -44,9 +44,6 @@ public class BarChartFoodSwapVisualizer extends AbstractFoodSwapVisualizer {
         }
     }
 
-    /**
-     * Check if all values are zero
-     */
     private boolean allValuesZero(Map<LocalDate, Double> map1, Map<LocalDate, Double> map2) {
         for (Double value : map1.values()) {
             if (value > 0) return false;
@@ -84,7 +81,6 @@ public class BarChartFoodSwapVisualizer extends AbstractFoodSwapVisualizer {
             int chartWidth = width - 2 * margin;
             int chartHeight = height - 2 * margin;
 
-            // Draw title
             g2d.setFont(new Font("Arial", Font.PLAIN, 14));
             g2d.drawString(title, margin, 20);
 
