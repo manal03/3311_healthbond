@@ -109,9 +109,9 @@ public class NutrientVisualizerUI extends JFrame {
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
         JScrollPane statusScroll = new JScrollPane(statusPanel);
 
-        tabbedPane.addTab("Pie Chart", chartPanel);
         tabbedPane.addTab("Summary", summaryScroll);
         tabbedPane.addTab("Status", statusScroll);
+        tabbedPane.addTab("Pie Chart", chartPanel);
 
         setVisible(true);
     }
@@ -139,9 +139,11 @@ public class NutrientVisualizerUI extends JFrame {
             List<NutrientSummary> summaries = analysis.analyzeNutrients(startDate, endDate);
             if (summaries.isEmpty()) showEmptyState();
             else {
-                showPieChart(summaries);
                 showTextSummary(summaries);
+                showPieChart(summaries);
                 showStatusIndicators(summaries);
+
+                tabbedPane.setSelectedIndex(0);
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(),
@@ -254,12 +256,46 @@ public class NutrientVisualizerUI extends JFrame {
         );
 
         StringBuilder html = new StringBuilder();
-        html.append("<html><body style='font-family:sans-serif;'>");
-        html.append("<h3 style='color:#2E86C1;'>Macronutrient Summary</h3>");
-        html.append("<table style='width:100%; border-collapse:collapse;'>");
-        html.append("<tr style='background-color:#f2f2f2; font-weight:bold;'>")
-                .append("<td>Nutrient</td><td>Amount</td><td>Unit</td><td>% Total</td>")
-                .append("</tr>");
+        html.append("""
+        <html><head>
+        <style>
+            body {
+                font-family: 'Segoe UI', sans-serif;
+                padding: 10px;
+                color: #333;
+                background-color: #f8fff8;
+            }
+            h3 {
+                color: #2E86C1;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+                background-color: #ffffff;
+            }
+            th, td {
+                border: 1px solid #d0e4d0;
+                padding: 8px;
+                text-align: center;
+            }
+            th {
+                background-color: #e6f6e6;
+                color: #2b4b2b;
+            }
+            tr:nth-child(even) {
+                background-color: #f4fdf4;
+            }
+            b {
+                color: #1F618D;
+            }
+        </style>
+        </head><body>
+    """);
+
+        html.append("<h3>Macronutrient Summary</h3>");
+        html.append("<table>");
+        html.append("<tr><th>Nutrient</th><th>Amount</th><th>Unit</th><th>% of Total</th></tr>");
 
         double otherAmount = 0;
         double otherTotal = 0;
@@ -269,7 +305,7 @@ public class NutrientVisualizerUI extends JFrame {
             String name = s.getName().toUpperCase();
             if (keyNutrients.contains(name)) {
                 html.append("<tr>")
-                        .append("<td>").append(cleanName(name)).append("</td>")
+                        .append("<td><b>").append(cleanName(name)).append("</b></td>")
                         .append("<td>").append(String.format("%.1f", s.getDailyAverage())).append("</td>")
                         .append("<td>").append(s.getUnit()).append("</td>")
                         .append("<td>").append(String.format("%.1f%%", s.getPercentageOfTotal())).append("</td>")
@@ -281,8 +317,8 @@ public class NutrientVisualizerUI extends JFrame {
             }
         }
 
-        html.append("<tr style='background-color:#f9f9f9;'>")
-                .append("<td><b>Other Nutrients</b></td>")
+        html.append("<tr style='font-weight:bold; background-color:#ecfaec;'>")
+                .append("<td>Other Nutrients</td>")
                 .append("<td>").append(String.format("%.1f", otherAmount)).append("</td>")
                 .append("<td>").append(unit).append("</td>")
                 .append("<td>").append(String.format("%.1f%%", otherTotal)).append("</td>")
@@ -293,6 +329,7 @@ public class NutrientVisualizerUI extends JFrame {
         summaryPane.setText(html.toString());
         summaryPane.setCaretPosition(0);
     }
+
 
     private void showStatusIndicators(List<NutrientSummary> summaries) {
         statusPanel.removeAll();

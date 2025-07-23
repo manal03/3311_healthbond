@@ -13,9 +13,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
-import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 public class SubstitutionUI extends JFrame {
@@ -90,7 +90,7 @@ public class SubstitutionUI extends JFrame {
         panel.setBackground(Color.WHITE);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -102,8 +102,9 @@ public class SubstitutionUI extends JFrame {
         List<String> allFoods = Substitution.getAllFoodNames();
         JComboBox<String> substituteCombo = new JComboBox<>(allFoods.toArray(new String[0]));
         substituteCombo.setEditable(true);
-
         JTextField editor = (JTextField) substituteCombo.getEditor().getEditorComponent();
+        editor.setBackground(new Color(235, 245, 235));
+        editor.setFont(new Font("Arial", Font.PLAIN, 14));
         editor.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -123,11 +124,14 @@ public class SubstitutionUI extends JFrame {
 
         JLabel lblStart = new JLabel("Start Date (YYYY-MM-DD):");
         JTextField startDateField = new JTextField(LocalDate.now().minusDays(7).toString());
+        startDateField.setBackground(new Color(235, 245, 235));
+        startDateField.setFont(new Font("Arial", Font.PLAIN, 14));
+        startDateField.setEnabled(false);
 
         JLabel lblEnd = new JLabel("End Date (YYYY-MM-DD):");
         JTextField endDateField = new JTextField(LocalDate.now().toString());
-
-        startDateField.setEnabled(false);
+        endDateField.setBackground(new Color(235, 245, 235));
+        endDateField.setFont(new Font("Arial", Font.PLAIN, 14));
         endDateField.setEnabled(false);
 
         rangeCombo.addActionListener(e -> {
@@ -152,16 +156,22 @@ public class SubstitutionUI extends JFrame {
             endDateField.setEnabled(custom);
         });
 
-        panel.add(lblOrig, gbc); gbc.gridx = 1; panel.add(originalCombo, gbc);
-        gbc.gridx = 0; gbc.gridy++; panel.add(lblSub, gbc); gbc.gridx = 1; panel.add(substituteCombo, gbc);
-        gbc.gridx = 0; gbc.gridy++; panel.add(lblRange, gbc); gbc.gridx = 1; panel.add(rangeCombo, gbc);
-        gbc.gridx = 0; gbc.gridy++; panel.add(lblStart, gbc); gbc.gridx = 1; panel.add(startDateField, gbc);
-        gbc.gridx = 0; gbc.gridy++; panel.add(lblEnd, gbc); gbc.gridx = 1; panel.add(endDateField, gbc);
+        gbc.gridx = 0; gbc.gridy = 0; panel.add(lblOrig, gbc);
+        gbc.gridx = 1; panel.add(originalCombo, gbc);
+        gbc.gridx = 0; gbc.gridy++; panel.add(lblSub, gbc);
+        gbc.gridx = 1; panel.add(substituteCombo, gbc);
+        gbc.gridx = 0; gbc.gridy++; panel.add(lblRange, gbc);
+        gbc.gridx = 1; panel.add(rangeCombo, gbc);
+        gbc.gridx = 0; gbc.gridy++; panel.add(lblStart, gbc);
+        gbc.gridx = 1; panel.add(startDateField, gbc);
+        gbc.gridx = 0; gbc.gridy++; panel.add(lblEnd, gbc);
+        gbc.gridx = 1; panel.add(endDateField, gbc);
 
         JButton btnApply = new JButton("Apply Substitution");
         btnApply.setBackground(new Color(85, 170, 85));
         btnApply.setForeground(Color.WHITE);
-        btnApply.setFont(new Font("Arial", Font.BOLD, 13));
+        btnApply.setFont(new Font("Arial", Font.BOLD, 14));
+        btnApply.setFocusable(false);
 
         btnApply.addActionListener(e -> {
             String orig = (String) originalCombo.getSelectedItem();
@@ -191,12 +201,11 @@ public class SubstitutionUI extends JFrame {
             }
         });
 
-        gbc.gridx = 0;
-        gbc.gridy++;
+        gbc.gridx = 0; gbc.gridy++;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(20, 8, 8, 8);
+        gbc.insets = new Insets(25, 10, 10, 10);
         panel.add(btnApply, gbc);
 
         dialog.setContentPane(panel);
@@ -278,10 +287,11 @@ public class SubstitutionUI extends JFrame {
 
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        table.setRowHeight(22);
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        table.getTableHeader().setBackground(new Color(230, 230, 230));
-        table.setGridColor(new Color(200, 200, 200));
+        table.setRowHeight(24);
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        table.getTableHeader().setBackground(new Color(220, 240, 220));
+        table.setGridColor(new Color(180, 200, 180));
         table.setShowGrid(true);
+        table.setSelectionBackground(new Color(140, 195, 140));
     }
 }
