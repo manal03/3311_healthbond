@@ -17,13 +17,14 @@ public class MainUI extends JFrame implements ActionListener {
     private JButton journalViewBtn;
     private JButton substitutionBtn;
     private JButton nutrientVisualBtn;
+    private JButton cfgAlignmentBtn;
 
     public MainUI(UserProfile user) {
         this.user = user;
 
-        setTitle("Health Tracker - Dashboard");
+        setTitle("HealthBond - Dashboard");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(800, 650);
         setLocationRelativeTo(null);
         getContentPane().setBackground(new Color(116, 209, 115));
         setLayout(null);
@@ -46,7 +47,7 @@ public class MainUI extends JFrame implements ActionListener {
 
         JPanel content = new JPanel();
         content.setLayout(null);
-        content.setBounds(100, 120, 600, 400);
+        content.setBounds(100, 120, 600, 480);
         content.setBackground(new Color(142, 182, 101));
         content.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         add(content);
@@ -109,6 +110,15 @@ public class MainUI extends JFrame implements ActionListener {
         nutrientVisualBtn.setFocusable(false);
         nutrientVisualBtn.addActionListener(this);
         content.add(nutrientVisualBtn);
+
+        cfgAlignmentBtn = new JButton("CFG Alignment");
+        cfgAlignmentBtn.setBounds(200, 420, 200, 40);
+        cfgAlignmentBtn.setFont(new Font("Arial", Font.PLAIN, 14));
+        cfgAlignmentBtn.setBackground(new Color(85, 170, 85));
+        cfgAlignmentBtn.setForeground(Color.WHITE);
+        cfgAlignmentBtn.setFocusable(false);
+        cfgAlignmentBtn.addActionListener(this);
+        content.add(cfgAlignmentBtn);
 
         JLabel infoLabel = new JLabel("User Info:");
         infoLabel.setBounds(50, 300, 100, 20);
