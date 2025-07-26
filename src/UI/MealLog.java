@@ -1,5 +1,7 @@
 package UI;
 
+import UI.Components.BackButton;
+import UI.Components.BackButtonToMain;
 import utility.ConnectionProvider;
 import models.UserProfile;
 
@@ -13,7 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-// Helper Class to store food data in the search list
+// Helper class to store food data in the search list
 class FoodItem {
     private final int foodId;
     private final String foodDescription;
@@ -50,6 +52,11 @@ public class MealLog extends JFrame {
         this.setSize(700, 550);
         this.setTitle("Log a Meal");
 
+        // Back button
+        BackButtonToMain back = new BackButtonToMain(this, user);
+        back.setBounds(10, 10, 80, 30);
+        this.add(back);
+
         String[] mealTypes = {"Breakfast", "Lunch", "Dinner", "Snack"};
         mealType = new JComboBox<>(mealTypes);
         mealType.setBounds(20, 60, 150, 30);
@@ -75,7 +82,9 @@ public class MealLog extends JFrame {
         JScrollPane listScrollPane = new JScrollPane(searchResultsList);
         listScrollPane.setBounds(20, 220, 650, 150);
 
-        JLabel quantityLabel = new JLabel("Quantity (grams):");
+        // Label for units (grams or ounces)
+        String unitLabel = user.isUsingImperial() ? "ounces" : "grams";
+        JLabel quantityLabel = new JLabel("Quantity (" + unitLabel + "):");
         quantityLabel.setBounds(20, 380, 150, 30);
         quantityField = new JTextField("100");
         quantityField.setBounds(20, 410, 150, 30);
@@ -143,14 +152,17 @@ public class MealLog extends JFrame {
 
         try (Connection con = ConnectionProvider.getCon()) {
             int mealId = getOrCreateMealId(con, (String) mealType.getSelectedItem(), dateField.getText());
-            int quantity = Integer.parseInt(quantityField.getText());
+            double enteredQty = Double.parseDouble(quantityField.getText());
+
+            // Convert ounces to grams if needed
+            int quantityInGrams = user.isUsingImperial() ? (int) Math.round(enteredQty * 28.3495) : (int) enteredQty;
 
             if (mealId != -1) {
                 String insertIngredientSQL = "INSERT INTO ingredients (idmeals, FoodID, quantity) VALUES (?, ?, ?)";
                 try (PreparedStatement ingredientStmt = con.prepareStatement(insertIngredientSQL)) {
                     ingredientStmt.setInt(1, mealId);
                     ingredientStmt.setInt(2, selectedFood.getFoodId());
-                    ingredientStmt.setInt(3, quantity);
+                    ingredientStmt.setInt(3, quantityInGrams);
                     ingredientStmt.executeUpdate();
                 }
 
