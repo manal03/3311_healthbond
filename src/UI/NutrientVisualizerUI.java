@@ -70,7 +70,7 @@ public class NutrientVisualizerUI extends JFrame {
         timeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         content.add(timeLabel);
 
-        timeRangeCombo = new JComboBox<>(new String[]{"Last 7 days", "Last 30 days", "Last 3 months", "All time"});
+        timeRangeCombo = new JComboBox<>(new String[]{"Today", "Last 7 days", "Last 30 days", "Last 3 months", "All time"});
         timeRangeCombo.setBounds(100, 50, 140, 25);
         content.add(timeRangeCombo);
 
@@ -128,6 +128,9 @@ public class NutrientVisualizerUI extends JFrame {
         LocalDate startDate;
 
         switch (period) {
+            case "Today" -> {
+                startDate = endDate;
+            }
             case "Last 7 days" -> startDate = endDate.minusDays(7);
             case "Last 30 days" -> startDate = endDate.minusDays(30);
             case "Last 3 months" -> startDate = endDate.minusMonths(3);
@@ -411,4 +414,3 @@ public class NutrientVisualizerUI extends JFrame {
         };
     }
 }
-

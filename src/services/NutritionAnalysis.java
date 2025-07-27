@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 
+
 public class NutritionAnalysis {
     private final UserProfile user;
     private final RecommendedIntake recommendedIntake;
@@ -82,5 +83,53 @@ public class NutritionAnalysis {
         }
         return averages;
     }
+
+    public Map<LocalDate, List<NutrientSummary>> getDailyBreakdown(LocalDate start, LocalDate end) throws SQLException {
+        Map<LocalDate, List<NutrientSummary>> dailyMap = new TreeMap<>();
+        Map<String, Float> recommendedMap = recommendedIntake.getRecommendedMap();
+
+        try (Connection con = ConnectionProvider.getCon()) {
+            String sql = """
+            SELECT m.date, nn.NutrientName, nn.NutrientUnit,
+                   SUM(na.NutrientValue * i.quantity / 100) AS total_value
+            FROM meals m
+            JOIN ingredients i ON m.idmeals = i.idmeals
+            JOIN nutrient_amount na ON i.FoodID = na.FoodID
+            JOIN nutrient_name nn ON na.NutrientID = nn.NutrientID
+            WHERE m.idusers = ? AND m.date BETWEEN ? AND ?
+            GROUP BY m.date, nn.NutrientName, nn.NutrientUnit
+            ORDER BY m.date ASC
+        """;
+
+            try (PreparedStatement stmt = con.prepareStatement(sql)) {
+                stmt.setInt(1, user.getUserId());
+                stmt.setDate(2, java.sql.Date.valueOf(start));
+                stmt.setDate(3, java.sql.Date.valueOf(end));
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        LocalDate date = rs.getDate("date").toLocalDate();
+                        String name = rs.getString("NutrientName");
+                        String unit = rs.getString("NutrientUnit");
+                        float totalValue = rs.getFloat("total_value");
+                        float recommended = recommendedMap.getOrDefault(name, 0f);
+
+                        NutrientSummary summary = new NutrientSummary(
+                                name,
+                                totalValue,
+                                recommended,
+                                unit,
+                                0 // percentage of total — not relevant for daily breakdown
+                        );
+
+                        dailyMap.computeIfAbsent(date, k -> new ArrayList<>()).add(summary);
+                    }
+                }
+            }
+        }
+
+        return dailyMap;
+    }
+
 }
 

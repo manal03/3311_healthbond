@@ -38,6 +38,7 @@ public class NutrientSummary {
             return new Color(220, 53, 69); // Red
         }
     }
+
 }
 
 
