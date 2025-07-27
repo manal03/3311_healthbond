@@ -18,4 +18,31 @@ public class Goal {
         this.Amount = Amount;
         this.isPercentage = isPercentage;
     }
+    // Getters for all fields
+    public String getGoalID() {
+        return GoalID;
+    }
+    public String getGoalType() {
+        return GoalType;
+    }
+    public String getIntensity() {
+        return Intensity;
+    }
+    public String getDirection() {
+        return Direction;
+    }
+    public String getLabel() {
+        return Label;
+    }
+    public double getAmount() {
+        return Amount;
+    }
+    public boolean isPercentage() {
+        return isPercentage;
+    }
+
+    @Override
+    public String toString() {
+        return Label;
+    }
 }

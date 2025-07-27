@@ -14,6 +14,7 @@ public class MainUI extends JFrame implements ActionListener {
     private JButton mealEntryBtn;
     private JButton editProfileBtn;
     private JButton generateGoalBtn;
+    private JButton viewGoalsBtn;
     private JButton journalViewBtn;
     private JButton substitutionBtn;
     private JButton nutrientVisualBtn;
@@ -58,8 +59,15 @@ public class MainUI extends JFrame implements ActionListener {
         menuLabel.setFont(new Font("Arial", Font.BOLD, 14));
         content.add(menuLabel);
 
+        int x = 200;
+        int y = 60;
+        int width = 200;
+        int height = 40;
+        int gap = 50;
+
         mealEntryBtn = new JButton("Enter Meal");
-        mealEntryBtn.setBounds(200, 60, 200, 40);
+        mealEntryBtn.setBounds(x, y, width, height);
+        y += gap;
         mealEntryBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         mealEntryBtn.setBackground(new Color(85, 170, 85));
         mealEntryBtn.setForeground(Color.WHITE);
@@ -68,7 +76,8 @@ public class MainUI extends JFrame implements ActionListener {
         content.add(mealEntryBtn);
 
         editProfileBtn = new JButton("Edit Profile");
-        editProfileBtn.setBounds(200, 110, 200, 40);
+        editProfileBtn.setBounds(x, y, width, height);
+        y += gap;
         editProfileBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         editProfileBtn.setBackground(new Color(85, 170, 85));
         editProfileBtn.setForeground(Color.WHITE);
@@ -77,7 +86,8 @@ public class MainUI extends JFrame implements ActionListener {
         content.add(editProfileBtn);
 
         generateGoalBtn = new JButton("Generate Goal");
-        generateGoalBtn.setBounds(200, 160, 200, 40);
+        generateGoalBtn.setBounds(x, y, width, height);
+        y += gap;
         generateGoalBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         generateGoalBtn.setBackground(new Color(85, 170, 85));
         generateGoalBtn.setForeground(Color.WHITE);
@@ -85,8 +95,19 @@ public class MainUI extends JFrame implements ActionListener {
         generateGoalBtn.addActionListener(this);
         content.add(generateGoalBtn);
 
+        viewGoalsBtn = new JButton("View Goals");
+        viewGoalsBtn.setBounds(x, y, width, height);
+        y += gap;
+        viewGoalsBtn.setFont(new Font("Arial", Font.PLAIN, 14));
+        viewGoalsBtn.setBackground(new Color(85, 170, 85));
+        viewGoalsBtn.setForeground(Color.WHITE);
+        viewGoalsBtn.setFocusable(false);
+        viewGoalsBtn.addActionListener(this);
+        content.add(viewGoalsBtn);
+
         journalViewBtn = new JButton("Journal View");
-        journalViewBtn.setBounds(200, 210, 200, 40);
+        journalViewBtn.setBounds(x, y, width, height);
+        y += gap;
         journalViewBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         journalViewBtn.setBackground(new Color(85, 170, 85));
         journalViewBtn.setForeground(Color.WHITE);
@@ -95,7 +116,8 @@ public class MainUI extends JFrame implements ActionListener {
         content.add(journalViewBtn);
 
         substitutionBtn = new JButton("Food Substitution");
-        substitutionBtn.setBounds(200, 260, 200, 40);
+        substitutionBtn.setBounds(x, y, width, height);
+        y += gap;
         substitutionBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         substitutionBtn.setBackground(new Color(85, 170, 85));
         substitutionBtn.setForeground(Color.WHITE);
@@ -104,7 +126,8 @@ public class MainUI extends JFrame implements ActionListener {
         content.add(substitutionBtn);
 
         nutrientVisualBtn = new JButton("Nutrient Visual");
-        nutrientVisualBtn.setBounds(200, 310, 200, 40);
+        nutrientVisualBtn.setBounds(x, y, width, height);
+        y += gap;
         nutrientVisualBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         nutrientVisualBtn.setBackground(new Color(85, 170, 85));
         nutrientVisualBtn.setForeground(Color.WHITE);
@@ -113,7 +136,8 @@ public class MainUI extends JFrame implements ActionListener {
         content.add(nutrientVisualBtn);
 
         cfgAlignmentBtn = new JButton("CFG Alignment");
-        cfgAlignmentBtn.setBounds(200, 360, 200, 40);
+        cfgAlignmentBtn.setBounds(x, y, width, height);
+        y += gap;
         cfgAlignmentBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         cfgAlignmentBtn.setBackground(new Color(85, 170, 85));
         cfgAlignmentBtn.setForeground(Color.WHITE);
@@ -122,13 +146,15 @@ public class MainUI extends JFrame implements ActionListener {
         content.add(cfgAlignmentBtn);
 
         foodSwapVisualBtn = new JButton("Food Swap Visual");
-        foodSwapVisualBtn.setBounds(200, 410, 200, 40);
+        foodSwapVisualBtn.setBounds(x, y, width, height);
+        y += gap;
         foodSwapVisualBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         foodSwapVisualBtn.setBackground(new Color(85, 170, 85));
         foodSwapVisualBtn.setForeground(Color.WHITE);
         foodSwapVisualBtn.setFocusable(false);
         foodSwapVisualBtn.addActionListener(this);
         content.add(foodSwapVisualBtn);
+
 
         JLabel infoLabel = new JLabel("User Info:");
         infoLabel.setBounds(50, 420, 100, 20);
@@ -173,6 +199,10 @@ public class MainUI extends JFrame implements ActionListener {
         } else if (e.getSource() == foodSwapVisualBtn) {
             new FoodSwapVisualizationUI(user);
             this.dispose();
+        }
+        else if (e.getSource() == viewGoalsBtn){
+            this.dispose();
+            new ViewGoalsUI(user);
         }
     }
 }

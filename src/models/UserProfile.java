@@ -82,5 +82,14 @@ public class UserProfile {
     public void setDob(String dob) {
         this.dob = dob;
     }
+
+    public boolean isUsingImperial() {
+        return unit != null && unit.equalsIgnoreCase("imperial");
+    }
+
+    public void setUsingImperial(boolean newUnit) {
+        this.unit = newUnit ? "imperial" : "metric";
+    }
+
 }
 
