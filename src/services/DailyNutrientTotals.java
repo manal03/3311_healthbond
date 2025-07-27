@@ -11,21 +11,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * This class implements the DailyNutrientInterface. It is responsible for
- * querying the database to calculate the total nutrient breakdown for all meals
- * a user has logged on a specific day.
- */
 public class DailyNutrientTotals implements DailyNutrientInterface {
 
-    /**
-     * Calculates the total nutrient breakdown for all meals a user logged on a specific date.
-     *
-     * @param user The UserProfile object for whom to calculate the totals.
-     * @param dateString The specific date to analyze, in "YYYY-MM-DD" format.
-     * @return A Map where the key is the Nutrient Name (e.g., "PROTEIN") and the
-     * value is the total calculated amount for that day. Returns an empty map if no meals are found or an error occurs.
-     */
     @Override
     public Map<String, Double> getDailyTotalsForUser(UserProfile user, String dateString) {
         Map<String, Double> dailyTotals = new HashMap<>();
@@ -58,13 +45,15 @@ public class DailyNutrientTotals implements DailyNutrientInterface {
                     String nutrientName = switch (nutrientCode) {
                         case 203 -> "PROTEIN";
                         case 204 -> "FAT (TOTAL LIPIDS)";
-                        case 205 -> "CARBOHYDRATE, TOTAL (BY DIFFERENCE)";
-                        case 208 -> "ENERGY (KILOCALORIES)";
-                        case 291 -> "FIBRE, TOTAL DIETARY";
+                        case 205 -> "Carbs";  
+                        case 208 -> "Calories"; 
+                        case 291 -> "Fiber";    
                         default -> "UNKNOWN";
                     };
 
-                    dailyTotals.put(nutrientName, totalAmount);
+                    if (!nutrientName.equals("UNKNOWN")) {
+                        dailyTotals.put(nutrientName, totalAmount);
+                    }
                 }
             }
 

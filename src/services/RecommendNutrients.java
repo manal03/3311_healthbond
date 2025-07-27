@@ -4,10 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,12 +11,9 @@ import models.RecommendationInterface;
 import models.UserProfile;
 import utility.ConnectionProvider;
 
-// Assume your UserProfile and ConnectionProvider classes exist.
-
 /**
- * This class implements the RecommendationInterface. It handles all the SQL
- * logic to query the nutrientrecommendations table and find the appropriate
- * daily goals for a user.
+ * Implements RecommendationInterface to fetch daily nutrient goals
+ * for a user based on their profile.
  */
 public class RecommendNutrients implements RecommendationInterface {
 
@@ -46,32 +39,28 @@ public class RecommendNutrients implements RecommendationInterface {
                 "    u.idusers = ?;";
 
         try (Connection conn = ConnectionProvider.getCon()) {
-
             if (conn == null) {
                 System.err.println("RecommendNutrients Error: Failed to get database connection.");
-                return recommendations; // Return empty map
+                return recommendations; // return empty map
             }
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                // Set the user ID for the WHERE clause
                 pstmt.setInt(1, user.getUserId());
 
-                ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    // If a record is found, populate the map.
-                    recommendations.put("Calories", rs.getDouble("recommended_calories_per_day"));
-                    recommendations.put("Carbs", rs.getDouble("recommended_carbs_grams"));
-                    recommendations.put("Protein", rs.getDouble("recommended_protein_grams"));
-                    recommendations.put("Fat", rs.getDouble("recommended_fat_grams"));
-                    recommendations.put("Fiber", rs.getDouble("recommended_fiber_grams"));
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        recommendations.put("Calories", rs.getDouble("recommended_calories_per_day"));
+                        recommendations.put("Carbs", rs.getDouble("recommended_carbs_grams"));
+                        recommendations.put("Protein", rs.getDouble("recommended_protein_grams"));
+                        recommendations.put("Fat", rs.getDouble("recommended_fat_grams"));
+                        recommendations.put("Fiber", rs.getDouble("recommended_fiber_grams"));  // consistent casing
+                    }
                 }
             }
         } catch (SQLException e) {
             System.err.println("Database error while fetching recommendations: " + e.getMessage());
             e.printStackTrace();
         }
-
-
 
         return recommendations;
     }

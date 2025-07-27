@@ -18,21 +18,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-// This class assumes that your 'Goal.java' file exists separately in your project.
-
 /**
  * This class contains the logic for comparing a user's actual nutrient intake
  * with their recommended goals to generate potential new goals.
  */
 public class GoalGenerator {
 
-    /**
-     * The main public method. It fetches, compares, and generates a list of
-     * potential goals for the user, excluding goals they have already added.
-     *
-     * @param user The UserProfile object to generate goals for.
-     * @return A List of Goal objects.
-     */
     public List<Goal> generateGoals(UserProfile user) {
         List<String> existingGoalLabels = getExistingGoalLabels(user);
         Map<String, Double> actualTotals = getActualTotalsForYesterday(user);
@@ -49,9 +40,7 @@ public class GoalGenerator {
             return potentialGoals;
         }
 
-        // --- COMPLETE COMPARISON LOGIC ---
-
-        // Compare Protein
+        // Protein
         double actualProtein = actualTotals.getOrDefault("PROTEIN", 0.0);
         double recommendedProtein = recommendedGoals.getOrDefault("Protein", 0.0);
         if (actualProtein < recommendedProtein * 0.8) {
@@ -60,7 +49,7 @@ public class GoalGenerator {
                     String.format("Increase daily protein by ~%.0f g", difference), difference, false));
         }
 
-        // Compare Fat
+        // Fat
         double actualFat = actualTotals.getOrDefault("FAT (TOTAL LIPIDS)", 0.0);
         double recommendedFat = recommendedGoals.getOrDefault("Fat", 0.0);
         if (actualFat > recommendedFat * 1.2) {
@@ -69,7 +58,7 @@ public class GoalGenerator {
                     String.format("Reduce daily fat by ~%.0f g", difference), difference, false));
         }
 
-        // Compare Carbs
+        // Carbs
         double actualCarbs = actualTotals.getOrDefault("CARBOHYDRATE, TOTAL (BY DIFFERENCE)", 0.0);
         double recommendedCarbs = recommendedGoals.getOrDefault("Carbs", 0.0);
         if (actualCarbs < recommendedCarbs * 0.8) {
@@ -78,7 +67,7 @@ public class GoalGenerator {
                     String.format("Increase daily carbs by ~%.0f g", difference), difference, false));
         }
 
-        // Compare Calories
+        // Calories
         double actualCalories = actualTotals.getOrDefault("ENERGY (KILOCALORIES)", 0.0);
         double recommendedCalories = recommendedGoals.getOrDefault("Calories", 0.0);
         if (actualCalories < recommendedCalories - 100) {
@@ -89,11 +78,19 @@ public class GoalGenerator {
                     "Reduce overall calorie intake.", 100, false));
         }
 
+      
+        double actualFiber = actualTotals.getOrDefault("FIBRE, TOTAL DIETARY", 0.0);
+        double recommendedFiber = recommendedGoals.getOrDefault("Fiber", 0.0);
+        if (actualFiber < recommendedFiber * 0.8) {
+            double difference = recommendedFiber - actualFiber;
+            potentialGoals.add(new Goal(UUID.randomUUID().toString(), "Fiber", "Moderate", "Increase",
+                    String.format("Increase daily fiber intake by ~%.0f g", difference), difference, false));
+        }
+
         if (potentialGoals.isEmpty()) {
             potentialGoals.add(new Goal(UUID.randomUUID().toString(), "General", "N/A", "N/A", "You are meeting your primary nutrient goals. Well done!", 0, false));
         }
 
-        // Filter out goals the user already has
         return potentialGoals.stream()
                 .filter(goal -> !existingGoalLabels.contains(goal.getLabel()))
                 .collect(Collectors.toList());
@@ -109,19 +106,20 @@ public class GoalGenerator {
             while (rs.next()) {
                 existingGoals.add(rs.getString("Label"));
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return existingGoals;
     }
 
-    private Map<String, Double> getActualTotalsForYesterday(UserProfile user) {
+    protected Map<String, Double> getActualTotalsForYesterday(UserProfile user) {
         DailyNutrientInterface nutrientTracker = new DailyNutrientTotals();
         String yesterdayDate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE);
         return nutrientTracker.getDailyTotalsForUser(user, yesterdayDate);
     }
 
-    private Map<String, Double> getRecommendedGoals(UserProfile user) {
+  
+    protected Map<String, Double> getRecommendedGoals(UserProfile user) {
         RecommendationInterface recommendationFinder = new RecommendNutrients();
         return recommendationFinder.findForUser(user);
     }
