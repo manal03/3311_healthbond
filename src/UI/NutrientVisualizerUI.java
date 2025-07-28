@@ -333,7 +333,6 @@ public class NutrientVisualizerUI extends JFrame {
         summaryPane.setCaretPosition(0);
     }
 
-
     private void showStatusIndicators(List<NutrientSummary> summaries) {
         statusPanel.removeAll();
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
