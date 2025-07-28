@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 
-
 public class NutritionAnalysis {
     private final UserProfile user;
     private final RecommendedIntake recommendedIntake;
