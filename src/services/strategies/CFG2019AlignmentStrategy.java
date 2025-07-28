@@ -14,6 +14,10 @@ public class CFG2019AlignmentStrategy implements CFGAlignmentStrategy {
     private static final double GRAINS_PERCENT = 25.0;
     private static final double PROTEIN_PERCENT = 25.0;
 
+    // Split vegetables and fruits for 50% total
+    private static final double VEGETABLES_PERCENT = 50;
+    private static final double FRUITS_PERCENT = 0;
+
     @Override
     public double calculateAlignmentScore(FoodGroupData data, UserProfile user) {
         if (data.getTotalServings() == 0) {
@@ -25,11 +29,12 @@ public class CFG2019AlignmentStrategy implements CFGAlignmentStrategy {
         double grainPercent = data.getGrainsPercentage();
         double proteinPercent = data.getProteinPercentage();
 
-        double vegScore = calculateCategoryScore(vegFruitPercent, VEGETABLES_FRUITS_PERCENT);
+        double vegFruitScore = calculateCategoryScore(vegFruitPercent, VEGETABLES_FRUITS_PERCENT);
         double grainScore = calculateCategoryScore(grainPercent, GRAINS_PERCENT);
         double proteinScore = calculateCategoryScore(proteinPercent, PROTEIN_PERCENT);
 
-        return (vegScore + grainScore + proteinScore) / 3;
+        // Ignore dairy
+        return (vegFruitScore + grainScore + proteinScore) / 3;
     }
 
     /**
@@ -37,12 +42,16 @@ public class CFG2019AlignmentStrategy implements CFGAlignmentStrategy {
      */
     private double calculateCategoryScore(double actual, double target) {
         double deviation = Math.abs(actual - target);
+
+        // More lenient scoring to avoid perfect 100% matches
         if (deviation <= 5) return 100;
         if (deviation <= 10) return 90;
         if (deviation <= 15) return 75;
+        if (deviation <= 20) return 60;
         if (deviation <= 25) return 50;
+        if (deviation <= 30) return 40;
 
-        return Math.max(0, 25 - deviation);
+        return Math.max(0, 30 - deviation);
     }
 
     @Override
@@ -62,7 +71,7 @@ public class CFG2019AlignmentStrategy implements CFGAlignmentStrategy {
 
     @Override
     public FoodGroupData getRecommendedProportions() {
-        return new FoodGroupData(50.0, 0.0, GRAINS_PERCENT, PROTEIN_PERCENT, 0.0);
+        return new FoodGroupData(VEGETABLES_PERCENT, FRUITS_PERCENT, GRAINS_PERCENT, PROTEIN_PERCENT, 0.0);
     }
 
     @Override
@@ -82,11 +91,11 @@ public class CFG2019AlignmentStrategy implements CFGAlignmentStrategy {
                 "Make water your drink of choice:\n" +
                 "• Replace sugary drinks with water\n" +
                 "• Use unflavoured milk in cereal, coffee, or tea\n\n" +
-                "CHANGES FROM 2007 GUIDE:\n" +
-                "• Simplified from 4 food groups to 3 main categories\n" +
-                "• Emphasis on plant-based proteins\n" +
-                "• Water instead of dairy as beverage recommendation\n" +
-                "• Focus on eating patterns rather than specific servings\n\n" +
+                "SCORING:\n" +
+                "• Your vegetables + fruits combined should be ~50% of your plate\n" +
+                "• Grains should be ~25% of your plate\n" +
+                "• Protein should be ~25% of your plate\n" +
+                "• Dairy is not emphasized as a separate category\n\n" +
                 "Your alignment score is calculated based on how closely\n" +
                 "your plate proportions match these recommendations.";
     }

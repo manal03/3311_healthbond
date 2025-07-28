@@ -18,33 +18,71 @@ public class CFG2007AlignmentStrategy implements CFGAlignmentStrategy {
     private static final double PROTEIN_PERCENT = 20.0;
     private static final double DAIRY_PERCENT = 5.0;
 
-    // Default serving recommendations (can be personalized based on user profile)
-    private static final int DEFAULT_VEGETABLES_SERVINGS = 7;
-    private static final int DEFAULT_FRUITS_SERVINGS = 2;
+    private static final int DEFAULT_VEGETABLES_SERVINGS = 5;
+    private static final int DEFAULT_FRUITS_SERVINGS = 3;
     private static final int DEFAULT_GRAINS_SERVINGS = 7;
     private static final int DEFAULT_PROTEIN_SERVINGS = 2;
     private static final int DEFAULT_DAIRY_SERVINGS = 2;
 
     @Override
     public double calculateAlignmentScore(FoodGroupData data, UserProfile user) {
+        if (data.getTotalServings() == 0) {
+            return 0.0;
+        }
+
+        // For CFG 2007, we can use either serving-based or percentage-based scoring
+        // Using percentage-based for consistency with CFG 2019
+        double vegScore = calculateCategoryScore(data.getVegetablesPercentage(), VEGETABLES_PERCENT);
+        double fruitScore = calculateCategoryScore(data.getFruitsPercentage(), FRUITS_PERCENT);
+        double grainScore = calculateCategoryScore(data.getGrainsPercentage(), GRAINS_PERCENT);
+        double proteinScore = calculateCategoryScore(data.getProteinPercentage(), PROTEIN_PERCENT);
+        double dairyScore = calculateCategoryScore(data.getDairyPercentage(), DAIRY_PERCENT);
+
+        // Average all five categories for CFG 2007
+        return (vegScore + fruitScore + grainScore + proteinScore + dairyScore) / 5;
+    }
+
+    /**
+     * Calculate score for a single category based on percentage deviation
+     */
+    private double calculateCategoryScore(double actual, double target) {
+        double difference = Math.abs(actual - target);
+
+        if (difference <= 5) return 100;
+        if (difference <= 10) return 85;
+        if (difference <= 15) return 70;
+        if (difference <= 20) return 55;
+        if (difference <= 25) return 40;
+        if (difference<= 30) return 25;
+
+        return Math.max(0, 10);
+    }
+
+    /**
+     * Alternative scoring method based on serving counts (for future use)
+     */
+    private double calculateServingBasedScore(FoodGroupData data, UserProfile user, int days) {
         Map<String, Integer> recommended = getCFG2007Recommendations(user);
 
-        double totalScore = 0;
-        int categories = 5;
+        double dailyVeg = data.getVegetables() / days;
+        double dailyFruit = data.getFruits() / days;
+        double dailyGrains = data.getGrains() / days;
+        double dailyProtein = data.getProtein() / days;
+        double dailyDairy = data.getDairy() / days;
 
-        totalScore += calculateCategoryScore(data.getVegetables(), recommended.get("vegetables"));
-        totalScore += calculateCategoryScore(data.getFruits(), recommended.get("fruits"));
-        totalScore += calculateCategoryScore(data.getGrains(), recommended.get("grains"));
-        totalScore += calculateCategoryScore(data.getProtein(), recommended.get("protein"));
-        totalScore += calculateCategoryScore(data.getDairy(), recommended.get("dairy"));
+        double vegScore = calculateServingScore(dailyVeg, recommended.get("vegetables"));
+        double fruitScore = calculateServingScore(dailyFruit, recommended.get("fruits"));
+        double grainScore = calculateServingScore(dailyGrains, recommended.get("grains"));
+        double proteinScore = calculateServingScore(dailyProtein, recommended.get("protein"));
+        double dairyScore = calculateServingScore(dailyDairy, recommended.get("dairy"));
 
-        return totalScore / categories;
+        return (vegScore + fruitScore + grainScore + proteinScore + dairyScore) / 5;
     }
 
     /**
      * Calculate score for a single category based on actual vs recommended servings
      */
-    private double calculateCategoryScore(double actual, int recommended) {
+    private double calculateServingScore(double actual, int recommended) {
         if (recommended == 0) return 100;
 
         double ratio = actual / recommended;
@@ -55,8 +93,10 @@ public class CFG2007AlignmentStrategy implements CFGAlignmentStrategy {
             return 80;
         } else if (ratio >= 0.4 && ratio <= 1.6) {
             return 60;
+        } else if (ratio >= 0.2 && ratio <= 1.8) {
+            return 40;
         } else {
-            return Math.max(0, 40 - Math.abs(ratio - 1.0) * 20);
+            return Math.max(0, 20);
         }
     }
 
@@ -98,27 +138,27 @@ public class CFG2007AlignmentStrategy implements CFGAlignmentStrategy {
     @Override
     public String getRecommendationsText() {
         return "CANADA'S FOOD GUIDE - 2007 RECOMMENDATIONS\n\n" +
+                "Daily Serving Recommendations:\n\n" +
                 "Vegetables and Fruits: 7-10 servings per day\n" +
+                "• Vegetables: ~5 servings (35% of plate)\n" +
+                "• Fruits: ~3 servings (15% of plate)\n" +
                 "• Eat at least one dark green and one orange vegetable each day\n" +
                 "• Choose vegetables and fruit prepared with little or no added fat, sugar or salt\n" +
                 "• Have vegetables and fruit more often than juice\n\n" +
-                "Grain Products: 6-8 servings per day\n" +
+                "Grain Products: 6-8 servings per day (25% of plate)\n" +
                 "• Make at least half of your grain products whole grain each day\n" +
                 "• Choose grain products that are lower in fat, sugar or salt\n\n" +
-                "Milk and Alternatives: 2-3 servings per day\n" +
-                "• Drink skim, 1%, or 2% milk each day\n" +
-                "• Select lower fat milk alternatives\n\n" +
-                "Meat and Alternatives: 2-3 servings per day\n" +
+                "Meat and Alternatives: 2-3 servings per day (20% of plate)\n" +
                 "• Have meat alternatives such as beans, lentils and tofu often\n" +
                 "• Eat at least two Food Guide Servings of fish each week\n" +
                 "• Select lean meat and alternatives prepared with little or no added fat or salt\n\n" +
-                "SERVING SIZE EXAMPLES:\n" +
-                "• Vegetables: 125 mL (1⁄2 cup) fresh, frozen or canned vegetables\n" +
-                "• Fruits: 1 medium fruit or 125 mL (1⁄2 cup) fresh, frozen or canned fruit\n" +
-                "• Grains: 1 slice bread or 125 mL (1⁄2 cup) cooked rice, pasta or cereal\n" +
-                "• Protein: 75 g (21⁄2 oz.) cooked fish, poultry, lean meat\n" +
-                "• Dairy: 250 mL (1 cup) milk or fortified soy beverage\n\n" +
-                "Your alignment score is calculated based on how closely\n" +
-                "your daily servings match these recommendations.";
+                "Milk and Alternatives: 2-3 servings per day (5% of plate)\n" +
+                "• Drink skim, 1%, or 2% milk each day\n" +
+                "• Select lower fat milk alternatives\n\n" +
+                "SCORING:\n" +
+                "Your alignment score is calculated based on how closely your\n" +
+                "food group proportions match the recommended percentages:\n" +
+                "• Vegetables: ~35%, Fruits: ~15%, Grains: ~25%\n" +
+                "• Protein: ~20%, Dairy: ~5%";
     }
 }
