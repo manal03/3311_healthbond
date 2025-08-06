@@ -45,9 +45,9 @@ public class DailyNutrientTotals implements DailyNutrientInterface {
                     String nutrientName = switch (nutrientCode) {
                         case 203 -> "PROTEIN";
                         case 204 -> "FAT (TOTAL LIPIDS)";
-                        case 205 -> "Carbs";  
-                        case 208 -> "Calories"; 
-                        case 291 -> "Fiber";    
+                        case 205 -> "CARBOHYDRATE, TOTAL (BY DIFFERENCE)";
+                        case 208 -> "ENERGY (KILOCALORIES)";
+                        case 291 -> "FIBRE, TOTAL DIETARY";
                         default -> "UNKNOWN";
                     };
 

@@ -49,11 +49,11 @@ public class RecommendNutrients implements RecommendationInterface {
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
-                        recommendations.put("Calories", rs.getDouble("recommended_calories_per_day"));
-                        recommendations.put("Carbs", rs.getDouble("recommended_carbs_grams"));
+                        recommendations.put("CALORIES", rs.getDouble("recommended_calories_per_day"));
+                        recommendations.put("CARBOHYDRATE, TOTAL (BY DIFFERENCE)", rs.getDouble("recommended_carbs_grams"));
                         recommendations.put("Protein", rs.getDouble("recommended_protein_grams"));
-                        recommendations.put("Fat", rs.getDouble("recommended_fat_grams"));
-                        recommendations.put("Fiber", rs.getDouble("recommended_fiber_grams"));  // consistent casing
+                        recommendations.put("FAT (TOTAL LIPIDS)", rs.getDouble("recommended_fat_grams"));
+                        recommendations.put("FIBRE, TOTAL DIETARY", rs.getDouble("recommended_fiber_grams"));  // consistent casing
                     }
                 }
             }

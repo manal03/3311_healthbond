@@ -61,7 +61,7 @@ public class GoalGeneratorTest {
         Map<String, Double> actualTotals = Map.of(
             "PROTEIN", 30.0,
             "FAT (TOTAL LIPIDS)", 90.0,
-            "CARBOHYDRATE, TOTAL (BY DIFFERENCE)", 230.0, 
+            "CARBOHYDRATE, TOTAL (BY DIFFERENCE)", 230.0,
             "ENERGY (KILOCALORIES)", 2400.0,
             "FIBRE, TOTAL DIETARY", 15.0
         );

@@ -8,7 +8,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
-import services.*;
+import services.NutritionAnalysis;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,10 +16,11 @@ import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
-public class NutrientVisualizerUI extends JFrame {
+public class NutrientVisualizerUI {
+
     private final UserProfile user;
+    private final JFrame frame;
     private JComboBox<String> timeRangeCombo;
     private JButton generateBtn;
     private JPanel chartPanel;
@@ -30,34 +31,44 @@ public class NutrientVisualizerUI extends JFrame {
 
     public NutrientVisualizerUI(UserProfile user) {
         this.user = user;
+        this.frame = new JFrame("Health Tracker - Nutrient Visualizer");
         initializeUI();
     }
 
     private void initializeUI() {
-        setTitle("Health Tracker - Nutrient Visualizer");
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(1000, 720);
-        setLayout(null);
-        setResizable(false);
-        getContentPane().setBackground(new Color(116, 209, 115));
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(1000, 720);
+        frame.setLayout(null);
+        frame.setResizable(false);
+        frame.getContentPane().setBackground(new Color(116, 209, 115));
 
+        buildHeader();
+        buildControlsPanel();
+        buildTabbedPane();
+
+        frame.setVisible(true);
+    }
+
+    private void buildHeader() {
         JLabel title = new JLabel("Nutrient Visualizer");
         title.setBounds(40, 30, 400, 30);
         title.setFont(new Font("Arial", Font.BOLD, 20));
         title.setForeground(Color.WHITE);
-        add(title);
+        frame.add(title);
 
         JLabel subtitle = new JLabel("Analyze your intake and visualize health stats");
         subtitle.setBounds(40, 60, 400, 20);
         subtitle.setFont(new Font("Arial", Font.PLAIN, 12));
         subtitle.setForeground(Color.WHITE);
-        add(subtitle);
+        frame.add(subtitle);
+    }
 
+    private void buildControlsPanel() {
         JPanel content = new JPanel(null);
         content.setBounds(60, 100, 880, 570);
         content.setBackground(new Color(142, 182, 101));
         content.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        add(content);
+        frame.add(content);
 
         userInfoLabel = new JLabel(getUserInfoText());
         userInfoLabel.setFont(new Font("Arial", Font.BOLD, 13));
@@ -95,7 +106,9 @@ public class NutrientVisualizerUI extends JFrame {
         tabbedPane = new JTabbedPane();
         tabbedPane.setBounds(20, 100, 830, 440);
         content.add(tabbedPane);
+    }
 
+    private void buildTabbedPane() {
         chartPanel = new JPanel(new BorderLayout());
         chartPanel.setBackground(Color.WHITE);
 
@@ -112,8 +125,6 @@ public class NutrientVisualizerUI extends JFrame {
         tabbedPane.addTab("Summary", summaryScroll);
         tabbedPane.addTab("Status", statusScroll);
         tabbedPane.addTab("Pie Chart", chartPanel);
-
-        setVisible(true);
     }
 
     private String getUserInfoText() {
@@ -149,16 +160,16 @@ public class NutrientVisualizerUI extends JFrame {
                 tabbedPane.setSelectedIndex(0);
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(),
+            JOptionPane.showMessageDialog(frame, "Database error: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
     private void showHelpDialog() {
-        JDialog dialog = new JDialog(this, "Nutrient Visualizer Help", true);
+        JDialog dialog = new JDialog(frame, "Nutrient Visualizer Help", true);
         dialog.setSize(540, 420);
-        dialog.setLocationRelativeTo(this);
+        dialog.setLocationRelativeTo(frame);
         dialog.setLayout(new BorderLayout(10, 10));
 
         String html = """
@@ -250,14 +261,6 @@ public class NutrientVisualizerUI extends JFrame {
     }
 
     private void showTextSummary(List<NutrientSummary> summaries) {
-        Set<String> keyNutrients = Set.of(
-                "ENERGY (KILOCALORIES)",
-                "CARBOHYDRATE, TOTAL (BY DIFFERENCE)",
-                "FAT (TOTAL LIPIDS)",
-                "PROTEIN",
-                "FIBRE, TOTAL DIETARY"
-        );
-
         StringBuilder html = new StringBuilder();
         html.append("""
         <html><head>
@@ -305,10 +308,9 @@ public class NutrientVisualizerUI extends JFrame {
         String unit = "";
 
         for (NutrientSummary s : summaries) {
-            String name = s.getName().toUpperCase();
-            if (keyNutrients.contains(name)) {
+            if (s.isKeyNutrient()) {
                 html.append("<tr>")
-                        .append("<td><b>").append(cleanName(name)).append("</b></td>")
+                        .append("<td><b>").append(s.getDisplayName()).append("</b></td>")
                         .append("<td>").append(String.format("%.1f", s.getDailyAverage())).append("</td>")
                         .append("<td>").append(s.getUnit()).append("</td>")
                         .append("<td>").append(String.format("%.1f%%", s.getPercentageOfTotal())).append("</td>")
@@ -337,13 +339,8 @@ public class NutrientVisualizerUI extends JFrame {
         statusPanel.removeAll();
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
 
-        Set<String> keyNutrients = Set.of(
-                "ENERGY (KILOCALORIES)", "PROTEIN", "FAT (TOTAL LIPIDS)",
-                "CARBOHYDRATE, TOTAL (BY DIFFERENCE)", "FIBRE, TOTAL DIETARY"
-        );
-
         for (NutrientSummary summary : summaries) {
-            if (keyNutrients.contains(summary.getName())) {
+            if (summary.isKeyNutrient()) {
                 statusPanel.add(createNutrientStatusPanel(summary));
                 statusPanel.add(Box.createVerticalStrut(10));
             }
@@ -361,22 +358,23 @@ public class NutrientVisualizerUI extends JFrame {
         ));
         card.setBackground(Color.WHITE);
 
+        Color statusColor = summary.getStatusColor();
+
         JPanel dot = new JPanel();
         dot.setPreferredSize(new Dimension(14, 14));
-        dot.setBackground(summary.getStatusColor());
+        dot.setBackground(statusColor);
         dot.setOpaque(true);
         dot.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
         dot.setMaximumSize(new Dimension(14, 14));
 
-        String cleanName = cleanName(summary.getName());
-        JLabel nameLabel = new JLabel("<html><b>" + cleanName + "</b></html>");
+        JLabel nameLabel = new JLabel("<html><b>" + summary.getDisplayName() + "</b></html>");
         nameLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
         JProgressBar bar = new JProgressBar(0, 200);
         bar.setValue((int) summary.getPercentageOfRecommended());
         bar.setStringPainted(true);
         bar.setString(String.format("%.1f%%", summary.getPercentageOfRecommended()));
-        bar.setForeground(summary.getStatusColor());
+        bar.setForeground(statusColor);
 
         JLabel amountLabel = new JLabel(String.format("%.1f / %.1f %s",
                 summary.getDailyAverage(),
@@ -400,16 +398,5 @@ public class NutrientVisualizerUI extends JFrame {
         card.add(amountLabel, BorderLayout.EAST);
 
         return card;
-    }
-
-    private String cleanName(String name) {
-        return switch (name.toUpperCase()) {
-            case "ENERGY (KILOCALORIES)" -> "Calories";
-            case "PROTEIN" -> "Protein";
-            case "FAT (TOTAL LIPIDS)" -> "Fat";
-            case "CARBOHYDRATE, TOTAL (BY DIFFERENCE)" -> "Carbs";
-            case "FIBRE, TOTAL DIETARY" -> "Fiber";
-            default -> name.length() > 17 ? name.substring(0, 15) + "…" : name;
-        };
     }
 }

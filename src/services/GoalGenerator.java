@@ -78,7 +78,7 @@ public class GoalGenerator {
                     "Reduce overall calorie intake.", 100, false));
         }
 
-      
+
         double actualFiber = actualTotals.getOrDefault("FIBRE, TOTAL DIETARY", 0.0);
         double recommendedFiber = recommendedGoals.getOrDefault("Fiber", 0.0);
         if (actualFiber < recommendedFiber * 0.8) {
@@ -118,7 +118,7 @@ public class GoalGenerator {
         return nutrientTracker.getDailyTotalsForUser(user, yesterdayDate);
     }
 
-  
+
     protected Map<String, Double> getRecommendedGoals(UserProfile user) {
         RecommendationInterface recommendationFinder = new RecommendNutrients();
         return recommendationFinder.findForUser(user);

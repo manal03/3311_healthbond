@@ -139,13 +139,14 @@ public class JournalViewUI extends JFrame {
             SELECT
                 nn.NutrientName,
                 SUM((na.NutrientValue * i.quantity * (1 - IFNULL(ra.RefuseAmount, 0) / 100)) / 100) AS totalAmount,
-                nn.UnitName
+                nn.NutrientUnit
             FROM ingredients i
             JOIN nutrient_amount na ON i.foodID = na.FoodID
             JOIN nutrient_name nn ON na.NutrientID = nn.NutrientID
-            LEFT JOIN refuse_amount ra ON i.foodID = ra.FoodID AND ra.NutrientID = na.NutrientID
+            LEFT JOIN refuse_amount ra ON i.foodID = ra.FoodID
             WHERE i.idmeals = ? AND nn.NutrientCode IN (203, 204, 205, 291, 269, 208)
-            GROUP BY nn.NutrientName, nn.UnitName
+            GROUP BY nn.NutrientName, nn.NutrientUnit
+            
         """;
 
             PreparedStatement stmt = con.prepareStatement(query);
@@ -159,7 +160,7 @@ public class JournalViewUI extends JFrame {
                 hasData = true;
                 String nutrientName = rs.getString("NutrientName");
                 double amount = rs.getDouble("totalAmount");
-                String unit = rs.getString("UnitName");
+                String unit = rs.getString("NutrientUnit");
 
                 // Handle null or unknown units
                 if (unit == null || unit.trim().isEmpty()) {
